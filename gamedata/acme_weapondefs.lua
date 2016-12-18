@@ -6,7 +6,7 @@ toSet = {
 }
 
 toDefault = {
-    -- we never set these tags (they should be nil) and thus they assume their defaults
+    -- tags that we don't worry about
     cegTag = 1,
     myGravity = 1,
     impactOnly = 1,
@@ -55,10 +55,12 @@ toDefault = {
     texture2 = 1,
     texture3 = 1,
     texture4 = 1,
+
+    turret = 1,
 }
 
 toChoose = {
-    -- we set these tags
+    -- we modify these tags
 
     range = "float",
     reloadTime = "float",
@@ -83,40 +85,43 @@ toChoose = {
     waterBounce = "bool",
     groundBounce = "bool",
     bounceRebound = "proportion",
-    numBounce = "integer",
+    numBounce = "natural",
 
     areaOfEffect = "float",
     edgeEffectiveness = "proportion",
     impulseFactor = "float",
     impulseBoost = "float",
     
-    burst = "1+integer",
+    burst = "natural",
     burstRate = "float",
-    projectiles = "1+integer",
+    projectiles = "natural",
     sprayAngle = "float",   
     
     intensity = "float",
 } 
 
-toChooseSpecial = {
-    -- we set these tags
-    name = true,
-
+toChooseSounds = {
+    -- we modify these tags with sounds
     soundTrigger = 1,
     soundStart = 1,
     soundHitDry = 1,
     soundHitWet = 1,
- 
-    model = 1,
-    rgbColor = 1,
+}
+
+toChooseCEGS = {
+    -- we modify these tags with CEGs
     explosionGenerator = 1,
     bounceExplosionGenerator = 1,
+}
+
+toChooseSpecial = {
+    -- we set these tags specially
+    name = true,
+ 
+    model = 1, 
+
+    rgbColor = 1,
 
     damage = "subtable",
     shield = "subtable",
-}
-
-toInherit = {
-    -- these tags we inherit from the weapon def we replace
-    turret = 1,
 }
