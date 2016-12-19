@@ -1,14 +1,11 @@
 Spring.Echo("YOU MUST CONSTRUCT ADDITIONAL PYLONS")
 
-UnitDefs = DEFS.unitDefs
-WeaponDefs = DEFS.weaponDefs
-
 ------------------ 
 -- GLOBAL CONTROLS
 ------------------ 
 
 local randomSeed = 1
-local EtoM = 60
+local VERBOSE = true
 
 
 ------------------ 
@@ -82,11 +79,12 @@ end
 
 ------------------ 
 -- HACK TO MAKE RANDOM NUMBER GENERATION "WORK" 
+-- Cute little RNG with good striping properties
 ------------------ 
 local _m = 3*3*113 -- 1017
 local _a = 3*113 + 1
 local _c = 5*5*5*7
-local _seed = 1 
+local _seed = randomSeed
 local _x = _seed
 local _gen = 0
 --local _generated = {} --uncomment to check if you went tits up
@@ -124,25 +122,32 @@ end
 -- SAMPLING
 ------------------ 
 
-local function SampleFloat(lambda)
+local function SampleExp(lambda)
     -- example exp var with mean lambda
     local r = math.random()
     if r==0 then r=1 end -- bleh
-    local val = -math.log(r)*lambda 
-    return val
+    return -math.log(r)*lambda 
+end
+local function SampleNormal(mean,var)
+    local r = math.random()
+    if r==0 then r=1 end -- bleh #2
+    local s = math.random()
+    local n = math.sqrt(-2*math.log(r))*math.cos(2*3.14*s)
+    return mean+n*math.sqrt(var)
 end
 local function SampleBool(p)
     local r = math.random()
     return (r<p)
 end
 local function SampleFromTable(t)
+    if type(t)~="table" then Spring.Echo("HORSE: not a table") end
     local n = math.random(#t)
     return t[n]
 end
 local function SampleInteger(m)
     return math.floor(SampleFloat(m))
 end
-local function SampleUniform()
+local function SampleProportion()
     return math.random()
 end
 
@@ -155,15 +160,117 @@ if (VFS.FileExists(ACME_WEAPONDEFS)) then
     VFS.Include(ACME_WEAPONDEFS)
 else
     Spring.Echo("Something has gone horribly wrong")
-    return "poo"
+    return "horse"
+end
+
+UnitDefs = DeepCopy(DEFS.unitDefs)
+WeaponDefs = DeepCopy(DEFS.weaponDefs)
+
+AntiAirWeapon = {} 
+for unitName,uDef in pairs(UnitDefs) do
+    if uDef.weapons then
+        for _,weapon in pairs(uDef.weapons) do
+            if weapon.onlytargetcategory=="VTOL" then
+                local wDef = WeaponDefs[weapon.name]
+                wDef.customparams = wDef.customparams or {}
+                wDef.customparams.antiair = true
+            end
+        end
+    end
+end
+
+wDef_cats = {
+    -- epically hard-coded uber horse hax
+    [1] = {"Explosion"},
+    [2] = {"BeamLaser", "LaserCannon", "Cannon", "LightningCannon", "Flame", "EmgCannon", "Rifle", "DGun"}, -- horse array table
+    [3] = {"AircraftBomb"},
+    [4] = {"StarburstLauncher"},
+    [5] = {"MissileLauncher"},
+    [6] = {"Melee"},
+    [7] = {"Shield"},
+    [8] = {"NoWeapon"},
+    [9] = {"TorpedoLauncher"},
+    [10] = {"AntiAir"}, -- special for horse sanity
+}
+
+local function wDef_cat (wDef)
+    -- assign category, must rely only on wDef and horse
+    local t = wDef.weapontype or wDef.weaponType
+    if t==nil then return 8 end
+    if wDef.customparams and wDef.customparams.antiair then return 10 end
+    
+    for cat,types in pairs(wDef_cats) do
+        for _,name in pairs(types) do
+            if t==name then 
+                return cat
+            end
+        end
+    end
+    
+    Spring.Echo("HORSE: failed to cat weapontype", wDef.name, t)
+end
+
+
+------------------ 
+-- HORSE
+------------------ 
+
+WeaponDefs_Original = DeepCopy(DEFS.weaponDefs) or horse
+
+local function MutilateWeaponDef(wDef, horseFactor)
+    local w = DeepCopy(wDef)
+
+    -- TODO
+    
+    return w
+end
+
+
+for name,wDef in pairs(WeaponDefs_Original) do
+    local w1 = MutilateWeaponDef(wDef,0.25)
+    WeaponDefs[name .. "_1"] = w1
+    local w2 = MutilateWeaponDef(wDef,0.75)
+    WeaponDefs[name .. "_2"] = w2    
 end
 
 
 
 
+------------------ 
+-- HORSE
+------------------ 
+
+WeaponNamesByCat = {}
+CatsByWeaponName = {}
+for name,wDef in pairs(WeaponDefs) do
+    local cat = wDef_cat(wDef)
+    WeaponNamesByCat[cat] = WeaponNamesByCat[cat] or {}
+    table.insert(WeaponNamesByCat[cat], name)
+    CatsByWeaponName[name] = cat
+    if VERBOSE then Spring.Echo("Recognized Weapon", name, CatsByWeaponName[name]) end
+end
+
+for _,uDef in pairs(UnitDefs) do
+    if uDef.weapons then
+        for _,weapon in pairs(uDef.weapons) do
+            local oldName = weapon.name
+            local cat = CatsByWeaponName[oldName]
+            if cat==nil then Spring.Echo("HORSE: ??!", oldName, cat) end
+            local newName = SampleFromTable(WeaponNamesByCat[cat])
+            weapon.name = newName
+            if VERBOSE then Spring.Echo("Replaced", oldName, newName, cat) end
+        end
+    end
+end
+
+------------------ 
+-- EXPORT
+------------------ 
 
 DEFS.unitDefs = UnitDefs
 DEFS.weaponDefs = WeaponDefs
+DEFS.horseDefs = HorseDefs
+Horse = true or Horse
 
 
 

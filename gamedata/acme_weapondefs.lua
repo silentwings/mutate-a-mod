@@ -59,7 +59,7 @@ toDefault = {
     turret = 1,
 }
 
-toChoose = {
+toChooseTags = {
     -- we modify these tags
 
     range = "float",
