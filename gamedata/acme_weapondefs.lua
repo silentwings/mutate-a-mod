@@ -4,6 +4,9 @@ toSetTagsW = {
     -- we set these tags for all weapons
     camerashake = false,
     soundtrigger = nil,
+
+    tolerance = 32000,
+    firetolerance = 32000,    
 }
 
 toDefaultTagsW = {
@@ -12,7 +15,6 @@ toDefaultTagsW = {
     mygravity = 1,
     impactonly = 1,
     noexplode = 1,
-    firetolerance = 1,
     interceptedbyshieldtype = 1,
     avoidground = 1,
     avoidfriendly = 1,
@@ -58,47 +60,45 @@ toDefaultTagsW = {
     texture4 = 1,
 
     turret = 1,
+    waterweapon = 1,
+    firesubmersed = 1,
 }
 
 toChooseTagsW = {
     -- we modify these tags
 
-    range = "float",
-    reloadtime = "float",
+    range = "floatif",
+    reloadtime = "floatif",
 
-    weaponvelocity = "float",
+    weaponvelocity = "floatif",
     
     burnblow = "bool",
     firestarter = "bool",
 
-    stockpile = "bool",
-    stockpiletime = "float",
-    metalpershot = "float",
-    energypershot = "float",    
+    --stockpile = "bool",
+    --stockpiletime = "float",
+    metalpershot = "floatif",
+    energypershot = "floatif",    
 
-    tolerance = "float",
-    waterweapon = "bool",
-    firesubmersed = "bool",
-    
     paralyzer = "bool",
-    paralyzetime = "float",
+    paralyzetime = "floatif",
 
     waterbounce = "bool",
     groundbounce = "bool",
     bouncerebound = "proportion",
     numbounce = "natural",
 
-    areaofeffect = "float",
+    areaofeffect = "floatif",
     edgeeffectiveness = "proportion",
-    impulsefactor = "float",
-    impulseboost = "float",
+    impulsefactor = "floatif",
+    impulseboost = "floatif",
     
     burst = "natural",
-    burstrate = "float",
+    burstrate = "floatif",
     projectiles = "natural",
-    sprayangle = "float",   
+    sprayangle = "floatif",   
     
-    intensity = "float",    
+    intensity = "floatif",    
 } 
 
 toChooseSoundsW = {
@@ -125,3 +125,4 @@ toChooseSpecialW = {
     damage = "subtable",
     shield = "subtable",
 }
+

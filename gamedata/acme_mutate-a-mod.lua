@@ -216,7 +216,7 @@ end
 wDef_cats = {
     -- epically hard-coded uber horse hax
     [1] = {"Explosion"},
-    [2] = {"BeamLaser", "LaserCannon", "Cannon", "LightningCannon", "Flame", "EmgCannon", "Rifle", "DGun"}, -- horse array table
+    [2] = {"BeamLaser", "LaserCannon", "Flame", "Cannon", "LightningCannon", "EmgCannon", "Rifle"}, -- horse array table
     [3] = {"AircraftBomb"},
     [4] = {"StarburstLauncher"},
     [5] = {"MissileLauncher"},
@@ -225,6 +225,7 @@ wDef_cats = {
     [8] = {"NoWeapon"},
     [9] = {"TorpedoLauncher"},
     [10] = {"AntiAir"}, -- special for horse sanity
+    [11] = {"DGun"},
 }
 
 local function wDef_cat (wDef)
@@ -236,7 +237,7 @@ local function wDef_cat (wDef)
     for cat,types in pairs(wDef_cats) do
         for _,name in pairs(types) do
             if t==name then 
-                return cat
+                return cat + (wDef.turret and 100 or 0) -- hack to avoid turrets replacing non-turrets
             end
         end
     end
@@ -273,15 +274,15 @@ end
 
 local WeaponDefs_Original = DeepCopy(DEFS.weaponDefs) or horse
 
-local function MutilateTag (tag, t, orig, horseFactor)
+local function MutilateTag (t, orig, horseFactor)
     if math.random()>horseFactor then return orig end
     
     -- horse
     if t=="bool" then
         return SampleBool()
-    elseif t=="float" or t=="floatif "then
+    elseif t=="float" or t=="floatif" or t=="float-range" or t=="float-time" or t=="float-cost" then
         if t=="floatif" and (orig==nil or orig==0) then return orig end 
-        if orig==nil then orig=250 end -- because horse
+        if t=="float" and orig==nil then orig=1 end
         local f = math.random() * orig * horseFactor * SampleSign()
         return orig + f
     elseif t=="proportion" then
@@ -294,13 +295,23 @@ local function MutilateTag (tag, t, orig, horseFactor)
     return orig
 end
 
+local function MutilateBeamLaser(wDef, horseFactor)
+    wDef.minintensity = math.min(math.random(), 0.75)
+    wDef.beamtime = MutilateTag("float", wDef.beamtime, horseFactor)
+    if math.random()>0.75 then
+        wDef.beamburst = MutilateTag("natural", wDef.beamburst, horseFactor)
+    end
+    wDef.largebeamlaser = SampleBool(0.1)
+    wDef.thickness = MutilateTag("float", wDef.thickness, horseFactor)
+end
+
 local function MutilateWeaponDef(wDef, horseFactor)
     local w = DeepCopy(wDef)
 
     -- horse generic stuff
     for tag,t in pairs(toChooseTagsW) do
         --Spring.Echo(tag, wDef.name, wDef[tag])
-        w[tag] = MutilateTag(tag, t, wDef[tag], horseFactor)
+        w[tag] = MutilateTag(t, wDef[tag], horseFactor)
     end
     
     -- horse explosions
@@ -314,6 +325,9 @@ local function MutilateWeaponDef(wDef, horseFactor)
     end
     
     -- TODO: weapon-type specific stuff
+    if wDef.type=="beamlaser" then
+        MutilateBeamLaser(wDef)
+    end
     
     -- overrides
     for tag,t in pairs(toSetTagsW) do
