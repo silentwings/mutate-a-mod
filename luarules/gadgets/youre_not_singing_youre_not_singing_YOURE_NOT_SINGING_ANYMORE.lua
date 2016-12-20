@@ -21,5 +21,14 @@ function gadget:Initialize()
 end
 
 function gadget:ProjectileCreated(proID, proOwnerID, weaponDefID)
-    Spring.Echo(WeaponDefs[weaponDefID].name .. " was fired")
+    --Spring.Echo(WeaponDefs[weaponDefID].name .. " was fired")
+end
+
+function gadget:UnitCreated(unitID, unitDefID)
+    local uDef = UnitDefs[unitDefID]
+    local s = uDef.name .. " has "
+    for _,t in pairs(uDef.weapons) do
+        s = s .. WeaponDefs[t.weaponDef].name .. " and "
+    end
+    Spring.Echo(s)
 end

@@ -80,8 +80,8 @@ toChooseTagsW = {
     metalpershot = "floatif",
     energypershot = "floatif",    
 
-    paralyzer = "bool",
-    paralyzetime = "floatif",
+    --paralyzer = "bool",
+    --paralyzetime = "floatif",
 
     waterbounce = "bool",
     groundbounce = "bool",

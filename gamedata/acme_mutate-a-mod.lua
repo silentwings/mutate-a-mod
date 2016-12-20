@@ -165,7 +165,7 @@ local function SampleFromTable(t)
     return t[n]
 end
 local function SampleInteger(m)
-    return math.floor(SampleFloat(m))
+    return math.floor(SampleExp(m))
 end
 local function SampleSign()
     return math.random()<0.5 and 1 or -1
@@ -309,7 +309,90 @@ local function MutilateBeamLaser(wDef, horseFactor)
     end
     wDef.largebeamlaser = SampleBool(0.1)
     wDef.thickness = MutilateTag("float", wDef.thickness, horseFactor)
+    
+    --rgbcolor
 end
+
+local function MutilateLaserCannon(wDef, horseFactor)
+    wDef.duration = math.random()*math.random()*math.random()
+    wDef.hardstop = SampleBool()
+    wDef.falloffrate = math.random()
+    wDef.thickness = MutilateTag("float", wDef.thickness, horseFactor)    
+    if math.random()<0.2 then wDef.thickness = wDef.thickness*2 end
+
+    --rgbcolor
+end
+
+local function MutilateFlame(wDef, horseFactor)
+    wDef.sizegrowth = 0.25+0.5*math.random()
+    wDef.flamegfxtime = 1+0.25*math.random()
+    if math.random()<0.1 then
+        wDef.range = wDef.range*2
+    end
+    
+    --colormap
+end
+
+local function MutilateCannon(wDef, horseFactor)
+    if math.random()<0.05 then wDef.hightrajectory = 2 end
+    
+    if math.random()<0.5 then
+        wDef.size = 20*math.random()*math.random()
+        wDef.sizedecay = 0.2*math.random()
+        wDef.stages = math.max(1, 5*math.random()*math.random()*math.random()*math.random())
+    end
+    
+    if math.random()<0.05 then
+        wDef.paralyzer = true
+        wDef.paralyzetime = 10*math.random()
+    end
+    
+    --colormap
+end
+
+local function MutilateLightningCannon(wDef, horseFactor)
+    -- horse
+end
+
+local function MutilateEmgCannon(wDef, horseFactor)
+    -- horse
+end
+
+local function MutilateAircraftBomb(wDef, horseFactor)
+    -- horse
+    if math.random()<0.1 then
+        wDef.burst = wDef.burst * math.random() * 3
+    end
+    if math.random()<0.05 then
+        wDef.paralyzer = true
+        wDef.paralyzetime = 10*math.random()
+    end
+end
+
+local function MutilateStarburstLauncher(wDef, horseFactor)
+    wDef.weapontimer = MutilateTag("floatif", wDef.weapontimer, 0.1)
+end
+
+local function MutilateMissileLauncher(wDef, horseFactor)
+    wDef.smoketrail = SampleBool()
+end
+
+local function MutilateShield(wDef, horseFactor)
+    if not wDef.shield or type(wDef.shield)~="table" then return end
+    
+    -- TODO
+end
+
+local function MutilateTorpedoLauncher(wDef, horseFactor)
+    wDef.submissile = SampleBool(0.25) or wDef.submissile
+end
+
+local function MutilateDGun(wDef, horseFactor)
+    if math.random()<0.1 then
+        wDef.range = wDef.range * 2 * (0.5+math.random()) -- luls
+    end
+end
+
 
 local function MutilateWeaponDef(wDef, horseFactor)
     local w = DeepCopy(wDef)
@@ -320,19 +403,36 @@ local function MutilateWeaponDef(wDef, horseFactor)
         w[tag] = MutilateTag(t, wDef[tag], horseFactor)
     end
     
-    -- horse explosions
-    for tag,_ in pairs(toChooseCEGsW) do
-        w[tag] = SampleFromTable(CEGs)
-    end
-    
     -- horse sounds
     for tag,_ in pairs(toChooseSoundsW) do
         w[tag] = SampleFromTable(Sounds)
     end
     
-    -- TODO: weapon-type specific stuff
-    if w.weapontype=="BeamLaser" then
-        MutilateBeamLaser(wDef, horseFactor)
+    -- weapon-type specific stuff
+    if w.weapontype=="BeamLaser" then MutilateBeamLaser(wDef, horseFactor) end
+    if w.weapontype=="LaserCannon" then MutilateLaserCannon(wDef, horseFactor) end
+    if w.weapontype=="Flame" then MutilateFlame(wDef, horseFactor) end
+    if w.weapontype=="Cannon" then MutilateCannon(wDef, horseFactor) end
+    if w.weapontype=="LightningCannon" then MutilateLightningCannon(wDef, horseFactor) end
+    if w.weapontype=="EmgCannon" then MutilateEmgCannon(wDef, horseFactor) end
+    if w.weapontype=="AircraftBomb" then MutilateAircraftBomb(wDef, horseFactor) end
+    if w.weapontype=="StarburstLauncher" then MutilateStarburstLauncher(wDef, horseFactor) end
+    if w.weapontype=="MissileLauncher" then MutilateMissileLauncher(wDef, horseFactor) end
+    if w.weapontype=="Shield" then MutilateShield(wDef, horseFactor) end
+    if w.weapontype=="TorpedoLauncher" then MutilateTorpedoLauncher(wDef, horseFactor) end
+    if w.weapontype=="DGun" then MutilateDGun(wDef, horseFactor) end
+    
+    -- damage sub-table
+    if wDef.damage and type(wDef.damage)=="table" then
+        for k,v in pairs(wDef.damage) do
+            wDef.damage[k] = MutilateTag("floatif", v, horseFactor)
+        end    
+    end
+    
+    -- horse explosions
+    for tag,_ in pairs(toChooseCEGsW) do
+        w[tag] = SampleFromTable(CEGs)
+        -- TODO match to size of new explosion
     end
     
     -- overrides
@@ -374,7 +474,7 @@ local function MutilateUnitDef(uDef, horseFactor)
 end
 
 ------------------ 
--- HORSE
+-- MULTIPLE HORSEGASMS
 ------------------ 
 
 -- insert two mutilated copies of each weapon into WeaponDefs table
@@ -388,7 +488,6 @@ end
 local WeaponNamesByCat = {}
 local CatsByWeaponName = {}
 for name,wDef in pairs(WeaponDefs) do
-    Spring.Echo(wDef.weapontype)
     local cat = wDef_cat(wDef)
     WeaponNamesByCat[cat] = WeaponNamesByCat[cat] or {}
     table.insert(WeaponNamesByCat[cat], name)
