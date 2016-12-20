@@ -5,7 +5,7 @@ Spring.Echo("YOU MUST CONSTRUCT ADDITIONAL PYLONS")
 ------------------ 
 
 local randomSeed = 1
-local VERBOSE = true
+local VERBOSE = false
 
 
 ------------------ 
@@ -84,18 +84,16 @@ function format(num, idp)
   return string.format("%." .. (idp or 0) .. "f", num)
 end
 
-function LowerTable(t)
+function LowerKeys(t)
+    -- convert all string key values in table and sub-tables to lower case
     local new_t = {}
     for k,v in pairs(t) do
-        if type(k)=="string" then
-            new_k = k:lower()
-        end
-        if type(v)=="string" then
-            new_v = v:lower()
-        end
+        local new_k = type(k)=="string" and k:lower() or k 
+        local new_v = DeepCopy(v)
+        if type(v)=="table" then new_v = LowerKeys(new_v) end
         new_t[new_k] = new_v
     end    
-    t = new_t
+    return new_t
 end
 
 ------------------ 
@@ -196,8 +194,18 @@ end
 local UnitDefs = DeepCopy(DEFS.unitDefs)
 local WeaponDefs = DeepCopy(DEFS.weaponDefs)
 
-LowerTable(UnitDefs)
-LowerTable(WeaponDefs)
+UnitDefs = LowerKeys(UnitDefs)
+WeaponDefs = LowerKeys(WeaponDefs)
+
+local WeaponDefs_Original = DeepCopy(WeaponDefs) 
+
+for name,wDef in pairs(WeaponDefs) do
+   Spring.Echo(name, wDef.weapontype)
+end
+
+------------------ 
+-- HORSE
+------------------ 
 
 -- extract horse aa 
 AntiAirWeapon = {} 
@@ -216,7 +224,7 @@ end
 wDef_cats = {
     -- epically hard-coded uber horse hax
     [1] = {"Explosion"},
-    [2] = {"BeamLaser", "LaserCannon", "Flame", "Cannon", "LightningCannon", "EmgCannon", "Rifle"}, -- horse array table
+    [2] = {"BeamLaser", "LaserCannon", "Flame", "Cannon", "LightningCannon", "EmgCannon"}, -- horse array table
     [3] = {"AircraftBomb"},
     [4] = {"StarburstLauncher"},
     [5] = {"MissileLauncher"},
@@ -226,11 +234,12 @@ wDef_cats = {
     [9] = {"TorpedoLauncher"},
     [10] = {"AntiAir"}, -- special for horse sanity
     [11] = {"DGun"},
+    [12] = {"Rifle"},
 }
 
 local function wDef_cat (wDef)
     -- assign category, must rely only on wDef and horse
-    local t = wDef.weapontype or wDef.weaponType
+    local t = wDef.weapontype 
     if t==nil then return 8 end
     if wDef.customparams and wDef.customparams.antiair then return 10 end
     
@@ -267,12 +276,9 @@ for _,uDef in pairs(UnitDefs) do
 end
 
 
-
 ------------------ 
 -- HORSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ------------------ 
-
-local WeaponDefs_Original = DeepCopy(DEFS.weaponDefs) or horse
 
 local function MutilateTag (t, orig, horseFactor)
     if math.random()>horseFactor then return orig end
@@ -325,8 +331,8 @@ local function MutilateWeaponDef(wDef, horseFactor)
     end
     
     -- TODO: weapon-type specific stuff
-    if wDef.type=="beamlaser" then
-        MutilateBeamLaser(wDef)
+    if w.weapontype=="BeamLaser" then
+        MutilateBeamLaser(wDef, horseFactor)
     end
     
     -- overrides
@@ -382,6 +388,7 @@ end
 local WeaponNamesByCat = {}
 local CatsByWeaponName = {}
 for name,wDef in pairs(WeaponDefs) do
+    Spring.Echo(wDef.weapontype)
     local cat = wDef_cat(wDef)
     WeaponNamesByCat[cat] = WeaponNamesByCat[cat] or {}
     table.insert(WeaponNamesByCat[cat], name)
