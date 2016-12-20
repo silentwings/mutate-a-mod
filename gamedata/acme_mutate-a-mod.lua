@@ -277,6 +277,38 @@ end
 
 
 ------------------ 
+-- TECHNICOLOUR HORSE
+------------------ 
+
+local ColorBank = {
+    "1 0 0 1",
+    "0 1 0 1",
+    "0 0 1 1",
+    "1 1 0 1",
+    "1 0 1 1",
+    "0 1 1 1",
+    "1.0 0.5 0.0 1.0",
+    "0.5 1.0 0.0 1.0",
+    "0.0 1.0 0.5 1.0",
+    "0.0 0.5 1.0 1.0",
+    "1.0 0.0 0.5 1.0",
+    "0.5 0.0 1.0 1.0",
+}
+
+local function SampleColor ()
+    return SampleFromTable(ColorBank)
+end
+local function SampleColorMap ()
+    local n = math.floor(SampleExp(0.33))
+    n = math.max(2,n)
+    local s = ""
+    for i=1,n do
+        s = s .. " " .. SampleColor()
+    end
+    return s
+end
+
+------------------ 
 -- HORSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ------------------ 
 
@@ -310,7 +342,9 @@ local function MutilateBeamLaser(wDef, horseFactor)
     wDef.largebeamlaser = SampleBool(0.1)
     wDef.thickness = MutilateTag("float", wDef.thickness, horseFactor)
     
-    --rgbcolor
+    if math.random()<0.5 then 
+        wDef.rgbcolor = SampleColor()
+    end
 end
 
 local function MutilateLaserCannon(wDef, horseFactor)
@@ -318,24 +352,26 @@ local function MutilateLaserCannon(wDef, horseFactor)
     wDef.hardstop = SampleBool()
     wDef.falloffrate = math.random()
     wDef.thickness = MutilateTag("float", wDef.thickness, horseFactor)    
-    if math.random()<0.2 then wDef.thickness = wDef.thickness*2 end
+    if math.random()<0.2 then wDef.thickness = wDef.thickness and wDef.thickness*2 or 1.0 end
 
-    --rgbcolor
+    if math.random()<0.5 then 
+        wDef.rgbcolor = SampleColor()
+    end
 end
 
 local function MutilateFlame(wDef, horseFactor)
     wDef.sizegrowth = 0.25+0.5*math.random()
     wDef.flamegfxtime = 1+0.25*math.random()
     if math.random()<0.1 then
-        wDef.range = wDef.range*2
+        wDef.range = wDef.range and wDef.range*2 or 250
     end
-    
-    --colormap
+
+    if math.random()<0.5 then
+        wDef.colormap = SampleColorMap()
+    end
 end
 
 local function MutilateCannon(wDef, horseFactor)
-    if math.random()<0.05 then wDef.hightrajectory = 2 end
-    
     if math.random()<0.5 then
         wDef.size = 20*math.random()*math.random()
         wDef.sizedecay = 0.2*math.random()
@@ -347,11 +383,15 @@ local function MutilateCannon(wDef, horseFactor)
         wDef.paralyzetime = 10*math.random()
     end
     
-    --colormap
+    if math.random()<0.5 then
+        wDef.colormap = SampleColorMap()
+    end
 end
 
 local function MutilateLightningCannon(wDef, horseFactor)
-    -- horse
+    if math.random()<0.5 then 
+        wDef.rgbcolor = SampleColor()
+    end    -- horse
 end
 
 local function MutilateEmgCannon(wDef, horseFactor)
@@ -361,7 +401,7 @@ end
 local function MutilateAircraftBomb(wDef, horseFactor)
     -- horse
     if math.random()<0.1 then
-        wDef.burst = wDef.burst * math.random() * 3
+        wDef.burst = wDef.burst and wDef.burst * math.random() * 3 or 1
     end
     if math.random()<0.05 then
         wDef.paralyzer = true
@@ -375,6 +415,13 @@ end
 
 local function MutilateMissileLauncher(wDef, horseFactor)
     wDef.smoketrail = SampleBool()
+    
+    wDef.startvelocity = wDef.startvelocity and wDef.startvelocity * (0.9+0.2*math.random())
+    if math.random()<0.2 then
+        wDef.wobble = math.random()
+    end
+    wDef.weaponacceleration = wDef.weaponacceleration and wDef.weaponacceleration * (0.9+0.2*math.random())
+    wDef.tracks = SampleBool()
 end
 
 local function MutilateShield(wDef, horseFactor)
@@ -399,6 +446,7 @@ local function MutilateWeaponDef(wDef, horseFactor)
 
     -- horse generic stuff
     for tag,t in pairs(toChooseTagsW) do
+        if w.weapontype=="TorpedoLauncher" or w.weapontype=="MissileLauncher" then break end -- these are too much trouble, they don't fire after the slightest horse modification
         --Spring.Echo(tag, wDef.name, wDef[tag])
         w[tag] = MutilateTag(t, wDef[tag], horseFactor)
     end
