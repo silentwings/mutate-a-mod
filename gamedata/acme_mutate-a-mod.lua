@@ -84,6 +84,20 @@ function format(num, idp)
   return string.format("%." .. (idp or 0) .. "f", num)
 end
 
+function LowerTable(t)
+    local new_t = {}
+    for k,v in pairs(t) do
+        if type(k)=="string" then
+            new_k = k:lower()
+        end
+        if type(v)=="string" then
+            new_v = v:lower()
+        end
+        new_t[new_k] = new_v
+    end    
+    t = new_t
+end
+
 ------------------ 
 -- HACK TO MAKE RANDOM NUMBER GENERATION "WORK" 
 -- Cute little RNG with good striping properties
@@ -171,9 +185,21 @@ else
     return "horse"
 end
 
-UnitDefs = DeepCopy(DEFS.unitDefs)
-WeaponDefs = DeepCopy(DEFS.weaponDefs)
+local ACME_UNITDEFS = "gamedata/acme_unitdefs.lua"
+if (VFS.FileExists(ACME_UNITDEFS)) then
+    VFS.Include(ACME_UNITDEFS)
+else
+    Spring.Echo("Careful with that axe, Eugene")
+    return "horse horse horse"
+end
 
+local UnitDefs = DeepCopy(DEFS.unitDefs)
+local WeaponDefs = DeepCopy(DEFS.weaponDefs)
+
+LowerTable(UnitDefs)
+LowerTable(WeaponDefs)
+
+-- extract horse aa 
 AntiAirWeapon = {} 
 for unitName,uDef in pairs(UnitDefs) do
     if uDef.weapons then
@@ -220,24 +246,32 @@ end
 
 local Sounds = {}
 for _,wDef in pairs(WeaponDefs) do
-    InsertIf(Sounds, wDef.soundstart)
-    InsertIf(Sounds, wDef.soundhitwet)
-    InsertIf(Sounds, wDef.soundhitdry)
+    for tag,_ in pairs(toChooseSoundsW) do
+        InsertIf(Sounds, wDef[tag])
+    end
 end
 
 local CEGs = {}
 for _,wDef in pairs(WeaponDefs) do
-    InsertIf(CEGs, wDef.explosiongenerator)
-    InsertIf(CEGs, wDef.bounceexplosiongenerator)
+    for tag,_ in pairs(toChooseCEGsW) do
+        InsertIf(CEGs, wDef[tag])
+    end
+end
+
+local Explosions = {}
+for _,uDef in pairs(UnitDefs) do
+    for tag,_ in pairs(toChooseExplosionsU) do
+        InsertIf(Explosions, uDef[tag])
+    end
 end
 
 
 
 ------------------ 
--- HORSE
+-- HORSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ------------------ 
 
-WeaponDefs_Original = DeepCopy(DEFS.weaponDefs) or horse
+local WeaponDefs_Original = DeepCopy(DEFS.weaponDefs) or horse
 
 local function MutilateTag (tag, t, orig, horseFactor)
     if math.random()>horseFactor then return orig end
@@ -245,7 +279,8 @@ local function MutilateTag (tag, t, orig, horseFactor)
     -- horse
     if t=="bool" then
         return SampleBool()
-    elseif t=="float" then
+    elseif t=="float" or t=="floatif "then
+        if t=="floatif" and (orig==nil or orig==0) then return orig end 
         if orig==nil then orig=250 end -- because horse
         local f = math.random() * orig * horseFactor * SampleSign()
         return orig + f
@@ -263,47 +298,75 @@ local function MutilateWeaponDef(wDef, horseFactor)
     local w = DeepCopy(wDef)
 
     -- horse generic stuff
-    for tag,t in pairs(toChooseTags) do
+    for tag,t in pairs(toChooseTagsW) do
         --Spring.Echo(tag, wDef.name, wDef[tag])
         w[tag] = MutilateTag(tag, t, wDef[tag], horseFactor)
     end
     
     -- horse explosions
-    for tag,_ in pairs(toChooseCEGs) do
+    for tag,_ in pairs(toChooseCEGsW) do
         w[tag] = SampleFromTable(CEGs)
     end
     
     -- horse sounds
-    for tag,_ in pairs(toChooseSounds) do
+    for tag,_ in pairs(toChooseSoundsW) do
         w[tag] = SampleFromTable(Sounds)
     end
     
     -- TODO: weapon-type specific stuff
     
     -- overrides
-    for tag,t in pairs(toSetTags) do
+    for tag,t in pairs(toSetTagsW) do
         w[tag] = t
     end
     
     return w
 end
 
-
--- insert two mutilated copies of each weapon into WeaponDefs table
-for name,wDef in pairs(WeaponDefs_Original) do
-    local w1 = MutilateWeaponDef(wDef,0.25)
-    WeaponDefs[name .. "_1"] = w1
-    local w2 = MutilateWeaponDef(wDef,0.75)
-    WeaponDefs[name .. "_2"] = w2    
+local function MutilateUnitDef(uDef, horseFactor)
+    local u = DeepCopy(uDef)
+    
+    -- generic horse stuff
+    for tag,t in pairs(toChooseTagsU) do
+        --Spring.Echo(tag, wDef.name, wDef[tag])
+        u[tag] = MutilateTag(tag, t, uDef[tag], horseFactor)
+    end
+    
+    -- randomize death horse explosions (lolcats)
+    for tag,t in pairs(toChooseExplosionsU) do
+        u[tag] = SampleFromTable(Explosions)  
+    end
+    
+    -- special horse
+    u.cancloak = SampleBool(0.02)
+    if u.cancloak then
+        u.cloakcost = SampleExp(100)
+        u.cloackcostmoving = SampleExp(1000)
+        u.mincloakdistance = SampleExp(100)    
+    end
+    
+    u.cancapture = SampleBool(0.02)
+    if u.cancapture then
+        u.capturespeed = SampleExp(250)
+    end
+    
+    u.hightrajectory = SampleBool(0.02)
 end
-
 
 ------------------ 
 -- HORSE
 ------------------ 
 
-WeaponNamesByCat = {}
-CatsByWeaponName = {}
+-- insert two mutilated copies of each weapon into WeaponDefs table
+for name,wDef in pairs(WeaponDefs_Original) do
+    local w1 = MutilateWeaponDef(wDef, 0.25)
+    WeaponDefs[name .. "_horse_1"] = w1
+    local w2 = MutilateWeaponDef(wDef, 0.75)
+    WeaponDefs[name .. "_horse_2"] = w2    
+end
+
+local WeaponNamesByCat = {}
+local CatsByWeaponName = {}
 for name,wDef in pairs(WeaponDefs) do
     local cat = wDef_cat(wDef)
     WeaponNamesByCat[cat] = WeaponNamesByCat[cat] or {}
@@ -326,6 +389,9 @@ for _,uDef in pairs(UnitDefs) do
     end
     
     uDef.name = "Horse " .. uDef.name
+    if math.random()<0.75 then
+        uDef.description = uDef.description .. " (horse)"
+    end
 end
 
 ------------------ 

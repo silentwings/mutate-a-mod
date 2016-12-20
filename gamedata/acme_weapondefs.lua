@@ -1,12 +1,12 @@
 -- all tags that are not specific to a weapon type
 
-toSetTags = {
+toSetTagsW = {
     -- we set these tags for all weapons
     camerashake = false,
     soundtrigger = nil,
 }
 
-toDefaultTags = {
+toDefaultTagsW = {
     -- tags that we don't worry about
     cegtag = 1,
     mygravity = 1,
@@ -60,7 +60,7 @@ toDefaultTags = {
     turret = 1,
 }
 
-toChooseTags = {
+toChooseTagsW = {
     -- we modify these tags
 
     range = "float",
@@ -101,20 +101,20 @@ toChooseTags = {
     intensity = "float",    
 } 
 
-toChooseSounds = {
+toChooseSoundsW = {
     -- we modify these tags with sounds
     soundstart = 1,
     soundhitdry = 1,
     soundhitwet = 1,
 }
 
-toChooseCEGs = {
+toChooseCEGsW = {
     -- we modify these tags with cegs
     explosiongenerator = 1,
     bounceexplosiongenerator = 1,
 }
 
-toChooseSpecial = {
+toChooseSpecialW = {
     -- we set these tags specially
     name = true,
  
