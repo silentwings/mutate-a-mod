@@ -1,56 +1,57 @@
 -- all tags that are not specific to a weapon type
 
-toSet = {
+toSetTags = {
     -- we set these tags for all weapons
-    cameraShake = false,
+    camerashake = false,
+    soundtrigger = nil,
 }
 
-toDefault = {
+toDefaultTags = {
     -- tags that we don't worry about
-    cegTag = 1,
-    myGravity = 1,
-    impactOnly = 1,
-    noExplode = 1,
-    fireTolerance = 1,
-    interceptedByShieldType = 1,
-    avoidGround = 1,
-    avoidFriendly = 1,
-    avoidNeutral = 1,
-    collideEnemy = 1,
-    collideFriendly = 1,
-    collideFeature = 1,
-    collideNeutral = 1,
-    collideGround = 1,
-    collisionSize = 1,
-    commandFire = 1,
-    canAttackGround = 1,
-    targetBorder = 1,
-    cylinderTargeting = 1,
-    allowNonBlockingAim = 1,
-    targetMoveError = 1,
-    leadLimit = 1,
-    leadBonus = 1,
-    predictBoost = 1,
-    heightMod = 1,
-    proximityPriority = 1,
+    cegtag = 1,
+    mygravity = 1,
+    impactonly = 1,
+    noexplode = 1,
+    firetolerance = 1,
+    interceptedbyshieldtype = 1,
+    avoidground = 1,
+    avoidfriendly = 1,
+    avoidneutral = 1,
+    collideenemy = 1,
+    collidefriendly = 1,
+    collidefeature = 1,
+    collideneutral = 1,
+    collideground = 1,
+    collisionsize = 1,
+    commandfire = 1,
+    canattackground = 1,
+    targetborder = 1,
+    cylindertargeting = 1,
+    allownonblockingaim = 1,
+    targetmoveerror = 1,
+    leadlimit = 1,
+    leadbonus = 1,
+    predictboost = 1,
+    heightmod = 1,
+    proximitypriority = 1,
     accuracy = 1,
-    movingAccuracy = 1,
-    ownerExpAccWeight = 1,
+    movingaccuracy = 1,
+    ownerexpaccweight = 1,
     targetable = 1,
     interceptor = 1,
-    interceptSolo = 1,
+    interceptsolo = 1,
     coverage = 1,
-    bounceSlip = 1,
-    craterAreaOfEffect = 1,
-    explosionSpeed = 1,
-    craterMult = 1,
-    craterBoost = 1,
-    dynDamageExp = 1,
-    dynDamageMin = 1,
-    dynDamageRange = 1,
-    dynDamageInverted = 1,
-    explosionScar = 1,
-    alwaysVisible = 1,
+    bounceslip = 1,
+    craterareaofeffect = 1,
+    explosionspeed = 1,
+    cratermult = 1,
+    craterboost = 1,
+    dyndamageexp = 1,
+    dyndamagemin = 1,
+    dyndamagerange = 1,
+    dyndamageinverted = 1,
+    explosionscar = 1,
+    alwaysvisible = 1,
     texture1 = 1,
     texture2 = 1,
     texture3 = 1,
@@ -63,55 +64,54 @@ toChooseTags = {
     -- we modify these tags
 
     range = "float",
-    reloadTime = "float",
+    reloadtime = "float",
 
-    weaponVelocity = "float",
+    weaponvelocity = "float",
     
-    burnBlow = "bool",
-    fireStarter = "bool",
+    burnblow = "bool",
+    firestarter = "bool",
 
     stockpile = "bool",
-    stockpileTime = "float",
-    metalPerShot = "float",
-    energyPerShot = "float",    
+    stockpiletime = "float",
+    metalpershot = "float",
+    energypershot = "float",    
 
     tolerance = "float",
-    waterWeapon = "bool",
-    fireSubmersed = "bool",
+    waterweapon = "bool",
+    firesubmersed = "bool",
     
     paralyzer = "bool",
-    paralyzeTime = "float",
+    paralyzetime = "float",
 
-    waterBounce = "bool",
-    groundBounce = "bool",
-    bounceRebound = "proportion",
-    numBounce = "natural",
+    waterbounce = "bool",
+    groundbounce = "bool",
+    bouncerebound = "proportion",
+    numbounce = "natural",
 
-    areaOfEffect = "float",
-    edgeEffectiveness = "proportion",
-    impulseFactor = "float",
-    impulseBoost = "float",
+    areaofeffect = "float",
+    edgeeffectiveness = "proportion",
+    impulsefactor = "float",
+    impulseboost = "float",
     
     burst = "natural",
-    burstRate = "float",
+    burstrate = "float",
     projectiles = "natural",
-    sprayAngle = "float",   
+    sprayangle = "float",   
     
-    intensity = "float",
+    intensity = "float",    
 } 
 
 toChooseSounds = {
     -- we modify these tags with sounds
-    soundTrigger = 1,
-    soundStart = 1,
-    soundHitDry = 1,
-    soundHitWet = 1,
+    soundstart = 1,
+    soundhitdry = 1,
+    soundhitwet = 1,
 }
 
-toChooseCEGS = {
-    -- we modify these tags with CEGs
-    explosionGenerator = 1,
-    bounceExplosionGenerator = 1,
+toChooseCEGs = {
+    -- we modify these tags with cegs
+    explosiongenerator = 1,
+    bounceexplosiongenerator = 1,
 }
 
 toChooseSpecial = {
@@ -120,7 +120,7 @@ toChooseSpecial = {
  
     model = 1, 
 
-    rgbColor = 1,
+    rgbcolor = 1,
 
     damage = "subtable",
     shield = "subtable",

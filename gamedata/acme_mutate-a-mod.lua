@@ -73,6 +73,13 @@ function SaveIf(key,t)
     end
 end
 
+function InsertIf(t,v)
+    -- horse
+    if v then
+        table.insert(t,v)
+   end
+end
+
 function format(num, idp)
   return string.format("%." .. (idp or 0) .. "f", num)
 end
@@ -136,6 +143,7 @@ local function SampleNormal(mean,var)
     return mean+n*math.sqrt(var)
 end
 local function SampleBool(p)
+    if p==nil then p=0.5 end
     local r = math.random()
     return (r<p)
 end
@@ -147,8 +155,8 @@ end
 local function SampleInteger(m)
     return math.floor(SampleFloat(m))
 end
-local function SampleProportion()
-    return math.random()
+local function SampleSign()
+    return math.random()<0.5 and 1 or -1
 end
 
 ------------------ 
@@ -210,6 +218,20 @@ local function wDef_cat (wDef)
     Spring.Echo("HORSE: failed to cat weapontype", wDef.name, t)
 end
 
+local Sounds = {}
+for _,wDef in pairs(WeaponDefs) do
+    InsertIf(Sounds, wDef.soundstart)
+    InsertIf(Sounds, wDef.soundhitwet)
+    InsertIf(Sounds, wDef.soundhitdry)
+end
+
+local CEGs = {}
+for _,wDef in pairs(WeaponDefs) do
+    InsertIf(CEGs, wDef.explosiongenerator)
+    InsertIf(CEGs, wDef.bounceexplosiongenerator)
+end
+
+
 
 ------------------ 
 -- HORSE
@@ -217,23 +239,63 @@ end
 
 WeaponDefs_Original = DeepCopy(DEFS.weaponDefs) or horse
 
+local function MutilateTag (tag, t, orig, horseFactor)
+    if math.random()>horseFactor then return orig end
+    
+    -- horse
+    if t=="bool" then
+        return SampleBool()
+    elseif t=="float" then
+        if orig==nil then orig=250 end -- because horse
+        local f = math.random() * orig * horseFactor * SampleSign()
+        return orig + f
+    elseif t=="proportion" then
+        return math.random()
+    elseif t=="natural" then
+        if orig==nil or orig==0 then orig=1 end
+        local f = math.random() * orig * horseFactor * SampleSign()
+        return math.max(0, math.floor(SampleExp(1/orig) + f))
+    end
+    return orig
+end
+
 local function MutilateWeaponDef(wDef, horseFactor)
     local w = DeepCopy(wDef)
 
-    -- TODO
+    -- horse generic stuff
+    for tag,t in pairs(toChooseTags) do
+        --Spring.Echo(tag, wDef.name, wDef[tag])
+        w[tag] = MutilateTag(tag, t, wDef[tag], horseFactor)
+    end
+    
+    -- horse explosions
+    for tag,_ in pairs(toChooseCEGs) do
+        w[tag] = SampleFromTable(CEGs)
+    end
+    
+    -- horse sounds
+    for tag,_ in pairs(toChooseSounds) do
+        w[tag] = SampleFromTable(Sounds)
+    end
+    
+    -- TODO: weapon-type specific stuff
+    
+    -- overrides
+    for tag,t in pairs(toSetTags) do
+        w[tag] = t
+    end
     
     return w
 end
 
 
+-- insert two mutilated copies of each weapon into WeaponDefs table
 for name,wDef in pairs(WeaponDefs_Original) do
     local w1 = MutilateWeaponDef(wDef,0.25)
     WeaponDefs[name .. "_1"] = w1
     local w2 = MutilateWeaponDef(wDef,0.75)
     WeaponDefs[name .. "_2"] = w2    
 end
-
-
 
 
 ------------------ 
@@ -250,6 +312,7 @@ for name,wDef in pairs(WeaponDefs) do
     if VERBOSE then Spring.Echo("Recognized Weapon", name, CatsByWeaponName[name]) end
 end
 
+-- assign weapons at random to units (keeping weapon cats constant)
 for _,uDef in pairs(UnitDefs) do
     if uDef.weapons then
         for _,weapon in pairs(uDef.weapons) do
@@ -261,6 +324,8 @@ for _,uDef in pairs(UnitDefs) do
             if VERBOSE then Spring.Echo("Replaced", oldName, newName, cat) end
         end
     end
+    
+    uDef.name = "Horse " .. uDef.name
 end
 
 ------------------ 
