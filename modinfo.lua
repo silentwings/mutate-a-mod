@@ -9,7 +9,7 @@ return {
 	modtype=1,
     horse=true,
 	depend = {
-		'Balanced Annihilation Reloaded $VERSION',
+		'Balanced Annihilation V9.46',
 	},
 }
 
