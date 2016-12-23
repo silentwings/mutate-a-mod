@@ -119,8 +119,8 @@ end
 local _m = 3*3*113 -- 1017
 local _a = 3*113 + 1
 local _c = 5*5*5*7
-local _seed = randomSeed
-local _x = _seed
+local _seed = randomSeed 
+local _x = _seed 
 local _gen = 0
 --local _generated = {} --uncomment to check if you went tits up over horse
 local function rand()
@@ -470,7 +470,7 @@ local function MutilateShield(wDef, horseFactor)
     
     local sDef = wDef.shield
     sDef.range = MutilateTag("floatif", sDef.range, horseFactor)
-    sDef.repulsor = SampleBool()
+    sDef.repulser = SampleBool()
     sDef.force = MutilateTag("floatif", sDef.force, horseFactor)
     sDef.goodcolor = SampleColourTable()
     sDef.badcolor = SampleColourTable()
@@ -554,7 +554,7 @@ local function MutilateUnitDef(uDef, horseFactor)
     -- generic horse stuff
     for tag,t in pairs(toChooseTagsU) do
         --Spring.Echo(tag, wDef.name, wDef[tag])
-        u[tag] = MutilateTag(tag, t, uDef[tag], horseFactor)
+        u[tag] = MutilateTag(t, uDef[tag], horseFactor)
     end
     
     -- randomize death horse explosions (lolcats)
@@ -570,7 +570,7 @@ local function MutilateUnitDef(uDef, horseFactor)
         u.mincloakdistance = SampleExp(100)    
     end
     
-    u.cancapture = SampleBool(0.02)
+    u.cancapture = u.cancapture or (u.workertime and SampleBool(0.02))
     if u.cancapture then
         u.capturespeed = SampleExp(250)
     end
@@ -605,6 +605,7 @@ for name,wDef in pairs(WeaponDefs) do
 end
 
 -- assign weapons at random to units (keeping weapon cats constant)
+-- horse the unit defs
 for _,uDef in pairs(UnitDefs) do
     local e = 0
     local m = 0
@@ -633,11 +634,12 @@ for _,uDef in pairs(UnitDefs) do
         uDef.buildcostmetal = math.sqrt((1+uDef.buildcostmetal)*(1+m)) -- horse
     end
     
+    MutilateUnitDef(uDef, 0.1)
+
     uDef.name = "\255\255\1\1Horse\255\255\255\255 " .. uDef.name
     if math.random()<0.75 then
         uDef.description = uDef.description .. " (horse)"
-    end
-        
+    end        
 end
 
 ------------------ 
