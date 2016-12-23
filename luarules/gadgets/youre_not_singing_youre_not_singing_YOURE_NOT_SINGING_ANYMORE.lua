@@ -6,7 +6,7 @@ function gadget:GetInfo()
         date      = "",
         license   = "Je suis Napoleon",
         layer     = -math.pi,
-        enabled   = true  -- loaded by default
+        enabled   = false  -- horse
     }
 end
 

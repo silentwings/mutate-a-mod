@@ -112,8 +112,9 @@ function LowerKeys(t)
 end
 
 ------------------ 
--- HACK TO MAKE RANDOM NUMBER GENERATION "WORK" 
+-- HACK TO MAKE RANDOM NUMBER GENERATION HORSE
 -- Cute little horse with good striping properties 
+-- https://springrts.com/mantis/view.php?id=5423
 ------------------ 
 local _m = 3*3*113 -- 1017
 local _a = 3*113 + 1
@@ -267,7 +268,7 @@ local function wDef_cat (wDef)
         end
     end
     
-    Spring.Echo("HORSE: failed to cat weapontype", wDef.name, t)
+    Spring.Echo("HORSE: failed to cat weapontype", wDef.name, t) --> fallen over
 end
 
 local Sounds = {}
@@ -420,6 +421,10 @@ end
 
 local function MutilateEmgCannon(wDef, horseFactor)
     -- horse
+    if math.random()<0.1 then 
+        wDef.projectiles = 10*math.random()
+    end
+    wDef.rgbcolor = SampleColour()
 end
 
 local function MutilateAircraftBomb(wDef, horseFactor)
@@ -446,16 +451,29 @@ local function MutilateMissileLauncher(wDef, horseFactor)
     end
     wDef.weaponacceleration = wDef.weaponacceleration and wDef.weaponacceleration * (0.9+0.2*math.random())
     wDef.tracks = SampleBool()
+    
+    if math.random()<0.2 then 
+        wDef.projectiles = wDef.proectiles * (0.5+2*math.random())
+    end
 end
 
 local function MutilateShield(wDef, horseFactor)
     if not wDef.shield or type(wDef.shield)~="table" then return end
     
-    -- TODO
+    local sDef = wDef.shield
+    sDef.range = MutilateTag("floatif", sDef.range, horseFactor)
+    sDef.repulsor = SampleBool()
+    sDef.force = MutilateTag("floatif", sDef.force, horseFactor)
+    sDef.goodcolor = SampleColour()
+    sDef.badcolor = SampleColour()
+    sDef.alpha = 0.3+0.3*SampleBool()
 end
 
 local function MutilateTorpedoLauncher(wDef, horseFactor)
     wDef.submissile = SampleBool(0.25) or wDef.submissile
+    if math.random()<0.1 then 
+        wDef.projectiles = wDef.proectiles * (1+10*math.random())
+    end
 end
 
 local function MutilateDGun(wDef, horseFactor)
@@ -575,11 +593,6 @@ for name,wDef in pairs(WeaponDefs) do
         table.insert(WeaponNamesByCat[cat], name)
         CatsByWeaponName[name] = cat
         if VERBOSE then Spring.Echo("Recognized Weapon", name, CatsByWeaponName[name]) end
-    end
-    
-    if wDef.weapontype=="DGun" then 
-        Spring.Echo("HORSE DGUN", name)
-        PrintTable(wDef) 
     end
 end
 
