@@ -81,6 +81,11 @@ table.insert(particleTypes, {
 		gravity = 54,
 		scale = 6600
 })
+table.insert(particleTypes, {
+		texture = 'horse.png',
+		gravity = 52,
+		scale = 4000
+})
 
 
 
