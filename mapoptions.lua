@@ -12,7 +12,7 @@ local horse = {
 	},
 	{
 		key     = 'horsetastic',
-		name    = 'Enable Horse',
+		name    = 'Horse Mutation',
 		desc    = 'Horse',
 		type    = 'bool',
 		section = 'Horse',

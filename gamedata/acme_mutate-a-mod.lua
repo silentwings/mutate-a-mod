@@ -318,7 +318,6 @@ local function SampleColourMap ()
         s = s .. SampleColour() .. " 1.0 "
     end
     s = string.sub(s,1,string.len(s)-1)
-    Spring.Echo(s)
     return s
 end
 

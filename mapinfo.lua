@@ -15,15 +15,12 @@ local mapinfo = {
 	--depend      = {"Map Helper v1"},
 	replace     = {},
 
-	--startpic   = "", --// deprecated
-	--StartMusic = "", --// deprecated
-
 	maphardness     = 300,
 	notDeformable   = false,
 	gravity         = 110,
 	tidalStrength   = 0,
-	maxMetal        = 0.02,
-	extractorRadius = 500.0,
+	maxMetal        = 3.5,
+	extractorRadius = 90.0,
 	voidWater       = true,
 	autoShowMetal   = true,
 
@@ -88,7 +85,7 @@ local mapinfo = {
 		sunDir        = {0.0, 1.0, 2.0, 1e9},
 
 		--// unit & ground lighting
-		groundAmbientColor  = {0.5, 0.5, 0.5},
+		groundAmbientColor  = {0.8, 0.8, 0.8},
 		groundDiffuseColor  = {0.5, 0.5, 0.5},
 		groundSpecularColor = {0.1, 0.1, 0.1},
 		groundShadowDensity = 0.0,
@@ -150,10 +147,10 @@ local mapinfo = {
 	},
 
 	teams = {
-		[0] = {startPos = {x = 2033, z = 852}},
-		[1] = {startPos = {x = 10134, z = 852}},
-		[2] = {startPos = {x = 0, z = 0}},
-		[3] = {startPos = {x = 0, z = 0}},
+		[0] = {startPos = {x = 1668, z = 3007}},
+		[1] = {startPos = {x = 6638, z = 3123}},
+		[2] = {startPos = {x = 1688, z = 355}},
+		[3] = {startPos = {x = 6296, z = 384}},
 	},
 
 	terrainTypes = {
@@ -162,9 +159,9 @@ local mapinfo = {
 			hardness = 1.0,
 			receiveTracks = true,
 			moveSpeeds = {
-				tank  = 1.0,
+				tank  = 1.1,
 				kbot  = 1.0,
-				hover = 1.0,
+				hover = 1.5,
 				ship  = 1.0,
 			},
 		},
