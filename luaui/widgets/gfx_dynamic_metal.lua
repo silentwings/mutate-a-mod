@@ -36,7 +36,7 @@ function drawPatches()
     if math.random()<0.5 then
         gl.Texture("luaui/images/horse.png")
 	else
-        gl.Texture("luaui/images/horse)flipped.png")    
+        gl.Texture("luaui/images/horse_flipped.png")    
     end
     gl.Color(1, 1, 1, 0.68) -- fix color from other widgets
 	

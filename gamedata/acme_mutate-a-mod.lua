@@ -326,6 +326,14 @@ local function SampleColourMap ()
     s = string.sub(s,1,string.len(s)-1)
     return s
 end
+local function SampleColourTable ()
+    local colour = SampleFromTable(ColourBank)
+    local r = tonumber(colour:sub(1,3))
+    local g = tonumber(colour:sub(5,7))
+    local b = tonumber(colour:sub(9,11))
+    local t = {r,g,b}
+    return t
+end
 
 ------------------ 
 -- HORSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -453,7 +461,7 @@ local function MutilateMissileLauncher(wDef, horseFactor)
     wDef.tracks = SampleBool()
     
     if math.random()<0.2 then 
-        wDef.projectiles = wDef.proectiles * (0.5+2*math.random())
+        wDef.projectiles = (wDef.proectiles or 1)* (0.5+2*math.random())
     end
 end
 
@@ -464,15 +472,15 @@ local function MutilateShield(wDef, horseFactor)
     sDef.range = MutilateTag("floatif", sDef.range, horseFactor)
     sDef.repulsor = SampleBool()
     sDef.force = MutilateTag("floatif", sDef.force, horseFactor)
-    sDef.goodcolor = SampleColour()
-    sDef.badcolor = SampleColour()
-    sDef.alpha = 0.3+0.3*SampleBool()
+    sDef.goodcolor = SampleColourTable()
+    sDef.badcolor = SampleColourTable()
+    sDef.alpha = 0.3+0.3*math.random()
 end
 
 local function MutilateTorpedoLauncher(wDef, horseFactor)
     wDef.submissile = SampleBool(0.25) or wDef.submissile
     if math.random()<0.1 then 
-        wDef.projectiles = wDef.proectiles * (1+10*math.random())
+        wDef.projectiles = (wDef.proectiles or 1) * (1+10*math.random())
     end
 end
 
