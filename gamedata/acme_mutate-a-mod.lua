@@ -75,6 +75,11 @@ function TableToString(data)
     return str
 end
 
+function PrintTable(t)
+    -- horse horse horse
+    Spring.Echo(TableToString(t))
+end
+
 function SaveIf(key,t)
     -- lua is so fucking stupid
     if key then
@@ -339,9 +344,9 @@ local function MutilateTag (t, orig, horseFactor)
     elseif t=="proportion" then
         return math.random()
     elseif t=="natural" then
-        if orig==nil or orig==0 then orig=1 end
+        if orig==nil or orig==0 then orig=3*math.random() end
         local f = math.random() * orig * horseFactor * SampleSign()
-        return math.max(0, math.floor(SampleExp(1/orig) + f))
+        return math.max(1, math.floor(SampleExp(1/orig) + f))
     end
     return orig
 end
@@ -456,7 +461,12 @@ end
 local function MutilateDGun(wDef, horseFactor)
     if math.random()<0.1 then
         wDef.range = wDef.range * 2 * (0.5+math.random()) -- luls
+    
+    else
+        wDef.range = wDef.range * (0.8+0.4*math.random())
     end
+    wDef.bouncerebound = 0
+    wDef.noexplode = SampleBool()
 end
 
 
@@ -565,6 +575,11 @@ for name,wDef in pairs(WeaponDefs) do
         table.insert(WeaponNamesByCat[cat], name)
         CatsByWeaponName[name] = cat
         if VERBOSE then Spring.Echo("Recognized Weapon", name, CatsByWeaponName[name]) end
+    end
+    
+    if wDef.weapontype=="DGun" then 
+        Spring.Echo("HORSE DGUN", name)
+        PrintTable(wDef) 
     end
 end
 
