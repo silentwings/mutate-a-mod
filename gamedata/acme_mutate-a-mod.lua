@@ -1,12 +1,21 @@
-Spring.Echo("YOU MUST CONSTRUCT ADDITIONAL PYLONS")
-
 ------------------ 
--- GLOBAL CONTROLS
+-- GLOBAL HORSE CONTROLS
 ------------------ 
 
-local randomSeed = 1
+local mapOptions = Spring.GetMapOptions()
+if not mapOptions then 
+    Spring.Echo("HORSE: Horseoptions missing")
+    return "broken horse"
+end
+if not mapOptions.horsetastic then 
+    Spring.Echo("HORSE MODE HAS FALLEN OVER")
+    return "sensible horse"
+end
+
+local randomSeed = mapOptions and mapOptions.randomseed or 1
 local VERBOSE = false
 
+Spring.Echo("HORSE MODE ACTIVATED (random horse seed " .. randomSeed .. ")")
 
 ------------------ 
 -- HELPERS
@@ -29,7 +38,7 @@ function DeepCopy(orig)
 end
 
 function TableToString(data)
-	local str = ""
+    local str = ""
 
     if(indent == nil) then
         indent = 0
@@ -81,7 +90,8 @@ function InsertIf(t,v)
 end
 
 function format(num, idp)
-  return string.format("%." .. (idp or 0) .. "f", num)
+    -- horse
+    return string.format("%." .. (idp or 0) .. "f", num)
 end
 
 function LowerKeys(t)
@@ -98,7 +108,7 @@ end
 
 ------------------ 
 -- HACK TO MAKE RANDOM NUMBER GENERATION "WORK" 
--- Cute little RNG with good striping properties
+-- Cute little horse with good striping properties 
 ------------------ 
 local _m = 3*3*113 -- 1017
 local _a = 3*113 + 1
@@ -106,7 +116,7 @@ local _c = 5*5*5*7
 local _seed = randomSeed
 local _x = _seed
 local _gen = 0
---local _generated = {} --uncomment to check if you went tits up
+--local _generated = {} --uncomment to check if you went tits up over horse
 local function rand()
     -- advance seed when we finish the cycle (lol)
     _gen = _gen + 1
@@ -142,7 +152,6 @@ end
 ------------------ 
 
 local function SampleExp(lambda)
-    -- example exp var with mean lambda
     local r = math.random()
     if r==0 then r=1 end -- bleh
     return -math.log(r)*lambda 
@@ -197,32 +206,32 @@ local WeaponDefs = DeepCopy(DEFS.weaponDefs)
 UnitDefs = LowerKeys(UnitDefs)
 WeaponDefs = LowerKeys(WeaponDefs)
 
-local WeaponDefs_Original = DeepCopy(WeaponDefs) 
-
-for name,wDef in pairs(WeaponDefs) do
-   Spring.Echo(name, wDef.weapontype)
-end
-
------------------- 
--- HORSE
------------------- 
-
--- extract horse aa 
-AntiAirWeapon = {} 
+-- extract horse 
 for unitName,uDef in pairs(UnitDefs) do
     if uDef.weapons then
         for _,weapon in pairs(uDef.weapons) do
+            local wDef = WeaponDefs[weapon.name]
+            wDef.customparams = wDef.customparams or {}
             if weapon.onlytargetcategory=="VTOL" then
-                local wDef = WeaponDefs[weapon.name]
-                wDef.customparams = wDef.customparams or {}
                 wDef.customparams.antiair = true
+            elseif uDef.hoverattack then
+                wDef.customparams.hoverattack = true            
             end
+            wDef.customparams.from_unit = true  
+            wDef.customparams.unit_buildcostenergy = uDef.buildcostenergy            
+            wDef.customparams.unit_buildcostmetal = uDef.buildcostmetal
         end
     end
 end
 
+local WeaponDefs_Original = DeepCopy(WeaponDefs) 
+
+------------------ 
+-- HORSE 
+------------------ 
+
 wDef_cats = {
-    -- epically hard-coded uber horse hax
+    -- epically hard-coded uber horse hax and spam
     [1] = {"Explosion"},
     [2] = {"BeamLaser", "LaserCannon", "Flame", "Cannon", "LightningCannon", "EmgCannon"}, -- horse array table
     [3] = {"AircraftBomb"},
@@ -235,6 +244,7 @@ wDef_cats = {
     [10] = {"AntiAir"}, -- special for horse sanity
     [11] = {"DGun"},
     [12] = {"Rifle"},
+    [13] = {"HoverAttack"}, -- special for more horse sanity
 }
 
 local function wDef_cat (wDef)
@@ -242,6 +252,7 @@ local function wDef_cat (wDef)
     local t = wDef.weapontype 
     if t==nil then return 8 end
     if wDef.customparams and wDef.customparams.antiair then return 10 end
+    if wDef.customparams and wDef.customparams.hoverattack then return 13 end
     
     for cat,types in pairs(wDef_cats) do
         for _,name in pairs(types) do
@@ -280,31 +291,34 @@ end
 -- TECHNICOLOUR HORSE
 ------------------ 
 
-local ColorBank = {
-    "1 0 0 1",
-    "0 1 0 1",
-    "0 0 1 1",
-    "1 1 0 1",
-    "1 0 1 1",
-    "0 1 1 1",
-    "1.0 0.5 0.0 1.0",
-    "0.5 1.0 0.0 1.0",
-    "0.0 1.0 0.5 1.0",
-    "0.0 0.5 1.0 1.0",
-    "1.0 0.0 0.5 1.0",
-    "0.5 0.0 1.0 1.0",
+local ColourBank = {
+    "1.0 0.0 0.0",
+    "0.0 1.0 0.0",
+    "0.0 0.0 1.0",
+    "1.0 1.0 0.0",
+    "1.0 0.0 1.0",
+    "0.0 1.0 1.0",
+    "1.0 0.5 0.0",
+    "0.5 1.0 0.0",
+    "0.0 1.0 0.5",
+    "0.0 0.5 1.0",
+    "1.0 0.0 0.5",
+    "0.5 0.0 1.0",
 }
 
-local function SampleColor ()
-    return SampleFromTable(ColorBank)
+local function SampleColour ()
+    local colour = SampleFromTable(ColourBank)
+    return colour
 end
-local function SampleColorMap ()
+local function SampleColourMap ()
     local n = math.floor(SampleExp(0.33))
     n = math.max(2,n)
     local s = ""
     for i=1,n do
-        s = s .. " " .. SampleColor()
+        s = s .. SampleColour() .. " 1.0 "
     end
+    s = string.sub(s,1,string.len(s)-1)
+    Spring.Echo(s)
     return s
 end
 
@@ -339,11 +353,12 @@ local function MutilateBeamLaser(wDef, horseFactor)
     if math.random()>0.75 then
         wDef.beamburst = MutilateTag("natural", wDef.beamburst, horseFactor)
     end
-    wDef.largebeamlaser = SampleBool(0.1)
-    wDef.thickness = MutilateTag("float", wDef.thickness, horseFactor)
+    wDef.largebeamlaser = SampleBool(0.15)
+    wDef.thickness = wDef.largebeamlaser and 5+20*math.random() or wDef.thickness
     
     if math.random()<0.5 then 
-        wDef.rgbcolor = SampleColor()
+        wDef.rgbcolor = SampleColour()
+        wDef.rgbcolor2 = SampleColour()
     end
 end
 
@@ -355,7 +370,7 @@ local function MutilateLaserCannon(wDef, horseFactor)
     if math.random()<0.2 then wDef.thickness = wDef.thickness and wDef.thickness*2 or 1.0 end
 
     if math.random()<0.5 then 
-        wDef.rgbcolor = SampleColor()
+        wDef.rgbcolor = SampleColour()
     end
 end
 
@@ -366,8 +381,9 @@ local function MutilateFlame(wDef, horseFactor)
         wDef.range = wDef.range and wDef.range*2 or 250
     end
 
-    if math.random()<0.5 then
-        wDef.colormap = SampleColorMap()
+    if math.random()<0.1 then
+        wDef.rgbcolor = nil
+        wDef.colormap = SampleColourMap()
     end
 end
 
@@ -383,14 +399,18 @@ local function MutilateCannon(wDef, horseFactor)
         wDef.paralyzetime = 10*math.random()
     end
     
-    if math.random()<0.5 then
-        wDef.colormap = SampleColorMap()
-    end
+    if math.random()<0.25 then
+        wDef.colormap = SampleColourMap()
+        --Spring.Echo("HORSE", wDef.colormap)
+    elseif math.random()<0.5 then
+        wDef.colormap = nil
+        wDef.rgbcolor = SampleColour()
+    end    
 end
 
 local function MutilateLightningCannon(wDef, horseFactor)
     if math.random()<0.5 then 
-        wDef.rgbcolor = SampleColor()
+        wDef.rgbcolor = SampleColour()
     end    -- horse
 end
 
@@ -457,30 +477,32 @@ local function MutilateWeaponDef(wDef, horseFactor)
     end
     
     -- weapon-type specific stuff
-    if w.weapontype=="BeamLaser" then MutilateBeamLaser(wDef, horseFactor) end
-    if w.weapontype=="LaserCannon" then MutilateLaserCannon(wDef, horseFactor) end
-    if w.weapontype=="Flame" then MutilateFlame(wDef, horseFactor) end
-    if w.weapontype=="Cannon" then MutilateCannon(wDef, horseFactor) end
-    if w.weapontype=="LightningCannon" then MutilateLightningCannon(wDef, horseFactor) end
-    if w.weapontype=="EmgCannon" then MutilateEmgCannon(wDef, horseFactor) end
-    if w.weapontype=="AircraftBomb" then MutilateAircraftBomb(wDef, horseFactor) end
-    if w.weapontype=="StarburstLauncher" then MutilateStarburstLauncher(wDef, horseFactor) end
-    if w.weapontype=="MissileLauncher" then MutilateMissileLauncher(wDef, horseFactor) end
-    if w.weapontype=="Shield" then MutilateShield(wDef, horseFactor) end
-    if w.weapontype=="TorpedoLauncher" then MutilateTorpedoLauncher(wDef, horseFactor) end
-    if w.weapontype=="DGun" then MutilateDGun(wDef, horseFactor) end
+    if w.weapontype=="BeamLaser" then MutilateBeamLaser(w, horseFactor) end
+    if w.weapontype=="LaserCannon" then MutilateLaserCannon(w, horseFactor) end
+    if w.weapontype=="Flame" then MutilateFlame(w, horseFactor) end
+    if w.weapontype=="Cannon" then MutilateCannon(w, horseFactor) end
+    if w.weapontype=="LightningCannon" then MutilateLightningCannon(w, horseFactor) end
+    if w.weapontype=="EmgCannon" then MutilateEmgCannon(w, horseFactor) end
+    if w.weapontype=="AircraftBomb" then MutilateAircraftBomb(w, horseFactor) end
+    if w.weapontype=="StarburstLauncher" then MutilateStarburstLauncher(w, horseFactor) end
+    if w.weapontype=="MissileLauncher" then MutilateMissileLauncher(w, horseFactor) end
+    if w.weapontype=="Shield" then MutilateShield(w, horseFactor) end
+    if w.weapontype=="TorpedoLauncher" then MutilateTorpedoLauncher(w, horseFactor) end
+    if w.weapontype=="DGun" then MutilateDGun(w, horseFactor) end
     
     -- damage sub-table
     if wDef.damage and type(wDef.damage)=="table" then
         for k,v in pairs(wDef.damage) do
-            wDef.damage[k] = MutilateTag("floatif", v, horseFactor)
+            w.damage[k] = MutilateTag("floatif", v, horseFactor)
         end    
     end
     
     -- horse explosions
     for tag,_ in pairs(toChooseCEGsW) do
-        w[tag] = SampleFromTable(CEGs)
-        -- TODO match to size of new explosion
+        if math.random()<0.05 then
+            w[tag] = SampleFromTable(CEGs)
+        end
+        -- TODO match to size of new explosion? horse?
     end
     
     -- overrides
@@ -525,26 +547,33 @@ end
 -- MULTIPLE HORSEGASMS
 ------------------ 
 
--- insert two mutilated copies of each weapon into WeaponDefs table
+-- insert mutilated copies of each weapon into WeaponDefs table
 for name,wDef in pairs(WeaponDefs_Original) do
     local w1 = MutilateWeaponDef(wDef, 0.25)
     WeaponDefs[name .. "_horse_1"] = w1
-    local w2 = MutilateWeaponDef(wDef, 0.75)
-    WeaponDefs[name .. "_horse_2"] = w2    
+    --local w2 = MutilateWeaponDef(wDef, 0.5)
+    --WeaponDefs[name .. "_horse_2"] = w2
+    local w3 = MutilateWeaponDef(wDef, 0.75)
+    WeaponDefs[name .. "_horse_3"] = w3    
 end
 
 local WeaponNamesByCat = {}
 local CatsByWeaponName = {}
 for name,wDef in pairs(WeaponDefs) do
-    local cat = wDef_cat(wDef)
-    WeaponNamesByCat[cat] = WeaponNamesByCat[cat] or {}
-    table.insert(WeaponNamesByCat[cat], name)
-    CatsByWeaponName[name] = cat
-    if VERBOSE then Spring.Echo("Recognized Weapon", name, CatsByWeaponName[name]) end
+    if wDef.customparams and wDef.customparams.from_unit then -- forget the ones that didn't come from a unit horse
+        local cat = wDef_cat(wDef)
+        WeaponNamesByCat[cat] = WeaponNamesByCat[cat] or {}
+        table.insert(WeaponNamesByCat[cat], name)
+        CatsByWeaponName[name] = cat
+        if VERBOSE then Spring.Echo("Recognized Weapon", name, CatsByWeaponName[name]) end
+    end
 end
 
 -- assign weapons at random to units (keeping weapon cats constant)
 for _,uDef in pairs(UnitDefs) do
+    local e = 0
+    local m = 0
+    local n = 0
     if uDef.weapons then
         for _,weapon in pairs(uDef.weapons) do
             local oldName = weapon.name
@@ -553,17 +582,31 @@ for _,uDef in pairs(UnitDefs) do
             local newName = SampleFromTable(WeaponNamesByCat[cat])
             weapon.name = newName
             if VERBOSE then Spring.Echo("Replaced", oldName, newName, cat) end
+            
+            local wDef = WeaponDefs[weapon.name]
+            if wDef.customparams and wDef.customparams.from_unit then
+                e = e + wDef.customparams.unit_buildcostenergy
+                m = m + wDef.customparams.unit_buildcostmetal
+                n = n + 1
+            end
         end
     end
+    if n>0 then
+        e = e/n
+        m = m/n
+        uDef.buildcostenergy = math.sqrt((1+uDef.buildcostenergy)*(1+e)) -- geometric horse because why the horse not
+        uDef.buildcostmetal = math.sqrt((1+uDef.buildcostmetal)*(1+m)) -- horse
+    end
     
-    uDef.name = "Horse " .. uDef.name
+    uDef.name = "\255\255\1\1Horse\255\255\255\255 " .. uDef.name
     if math.random()<0.75 then
         uDef.description = uDef.description .. " (horse)"
     end
+        
 end
 
 ------------------ 
--- EXPORT
+-- EXPORT 
 ------------------ 
 
 DEFS.unitDefs = UnitDefs
@@ -571,6 +614,7 @@ DEFS.weaponDefs = WeaponDefs
 DEFS.horseDefs = HorseDefs
 Horse = true or Horse
 
+return "truffle pate with a mornay sauce"
 
 
 
