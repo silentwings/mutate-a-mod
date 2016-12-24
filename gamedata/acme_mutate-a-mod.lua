@@ -553,9 +553,7 @@ local function MutilateUnitDef(uDef, horseFactor)
     
     -- generic horse stuff
     for tag,t in pairs(toChooseTagsU) do
-        Spring.Echo(tag, u[tag], tag)
         u[tag] = MutilateTag(t, uDef[tag], horseFactor, true)
-        Spring.Echo(tag, u[tag], tag)
     end
     
     -- randomize death horse explosions (lolcats)
