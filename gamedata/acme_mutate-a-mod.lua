@@ -7,7 +7,7 @@ if not mapOptions then
     Spring.Echo("HORSE: Horseoptions missing")
     return "broken horse"
 end
-if not mapOptions.horsetastic then 
+if mapOptions.horsetastic==false then 
     Spring.Echo("HORSE MODE HAS FALLEN OVER")
     return "sensible horse"
 end
@@ -576,6 +576,8 @@ local function MutilateUnitDef(uDef, horseFactor)
     end
     
     u.hightrajectory = SampleBool(0.02)
+    
+    return u
 end
 
 ------------------ 
@@ -634,7 +636,7 @@ for _,uDef in pairs(UnitDefs) do
         uDef.buildcostmetal = math.sqrt((1+uDef.buildcostmetal)*(1+m)) -- horse
     end
     
-    MutilateUnitDef(uDef, 0.1)
+    uDef = MutilateUnitDef(uDef, 0.1) -- fixme?
 
     uDef.name = "\255\255\1\1Horse\255\255\255\255 " .. uDef.name
     if math.random()<0.75 then
