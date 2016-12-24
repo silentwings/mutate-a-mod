@@ -339,8 +339,8 @@ end
 -- HORSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ------------------ 
 
-local function MutilateTag (t, orig, horseFactor)
-    if math.random()>horseFactor then return orig end
+local function MutilateTag (t, orig, horseFactor, overrideHorseTest)
+    if math.random()>horseFactor and (not overrideHorseTest) then return orig end
     
     -- horse
     if t=="bool" then
@@ -553,8 +553,9 @@ local function MutilateUnitDef(uDef, horseFactor)
     
     -- generic horse stuff
     for tag,t in pairs(toChooseTagsU) do
-        --Spring.Echo(tag, wDef.name, wDef[tag])
-        u[tag] = MutilateTag(t, uDef[tag], horseFactor)
+        Spring.Echo(tag, u[tag], tag)
+        u[tag] = MutilateTag(t, uDef[tag], horseFactor, true)
+        Spring.Echo(tag, u[tag], tag)
     end
     
     -- randomize death horse explosions (lolcats)
@@ -588,8 +589,8 @@ end
 for name,wDef in pairs(WeaponDefs_Original) do
     local w1 = MutilateWeaponDef(wDef, 0.25)
     WeaponDefs[name .. "_horse_1"] = w1
-    --local w2 = MutilateWeaponDef(wDef, 0.5)
-    --WeaponDefs[name .. "_horse_2"] = w2
+    local w2 = MutilateWeaponDef(wDef, 0.5)
+    WeaponDefs[name .. "_horse_2"] = w2
     local w3 = MutilateWeaponDef(wDef, 0.75)
     WeaponDefs[name .. "_horse_3"] = w3    
 end
@@ -636,8 +637,11 @@ for _,uDef in pairs(UnitDefs) do
         uDef.buildcostmetal = math.sqrt((1+uDef.buildcostmetal)*(1+m)) -- horse
     end
     
-    uDef = MutilateUnitDef(uDef, 0.1) -- fixme?
+    --Spring.Echo(uDef.maxdamage)
+    uDef = MutilateUnitDef(uDef, 0.15) -- fixme?
+    --Spring.Echo(uDef.maxdamage)
 
+    
     uDef.name = "\255\255\1\1Horse\255\255\255\255 " .. uDef.name
     if math.random()<0.75 then
         uDef.description = uDef.description .. " (horse)"
