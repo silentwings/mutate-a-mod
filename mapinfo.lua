@@ -4,7 +4,7 @@
 --
 
 local mapinfo = {
-	name        = "Christmas Horse v1",
+	name        = "Christmas Horse v2",
 	shortname   = "Horse",
 	description = "Just because I can give multiple orgasms to the furniture just by sitting on it, doesn't mean that I'm not sick of this damn war: the blood, the noise, the endless poetry.",
 	author      = "Horse",
