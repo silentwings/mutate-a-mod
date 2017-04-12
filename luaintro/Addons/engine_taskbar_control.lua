@@ -15,7 +15,6 @@ end
 
 --------------------------------------------------------------------------------
 function addon:Initialize()
-	local name = Game.modName
-	Spring.SetWMIcon("bitmaps/balogo.png")
-	Spring.SetWMCaption(name .. " (Spring " .. Game.version .. ")", name)
+	Spring.SetWMIcon("bitmaps/horse.png")
+	Spring.SetWMCaption("Just because I can give multiple orgasms to the furniture just by sitting on it, doesn't mean that I'm not sick of this damn war: the blood, the noise, the endless poetry.")
 end

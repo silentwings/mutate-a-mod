@@ -12,7 +12,7 @@ if mapOptions.horsetastic==false then
     return "sensible horse"
 end
 
-local randomSeed = mapOptions and mapOptions.randomseed or 1
+local randomSeed = mapOptions and mapOptions.randomseed or 0
 local VERBOSE = false
 
 Spring.Echo("HORSE MODE ACTIVATED (random horse seed " .. randomSeed .. ")")
@@ -148,7 +148,13 @@ local function Random(n,m)
     m = m or 1
     return m + math.floor(rand()*(n-m))
 end
-math.random = Random
+if randomSeed==0 or not math.random then
+    math.random = Random
+    Spring.Echo("Replaced RNG with bunny")
+end
+if not math.random then
+    Spring.Echo("BUNNY HAS FALLEN OVER")
+end
 for i=1,10 do
     Spring.Echo("Random Numbers", math.random(100), math.random())
 end
@@ -214,9 +220,12 @@ WeaponDefs = LowerKeys(WeaponDefs)
 
 -- extract horse 
 for unitName,uDef in pairs(UnitDefs) do
+    uDef.buildcostenergy = uDef.buildcostenergy or 0
+    uDef.buildcostmetal = uDef.buildcostmetal or 0
     if uDef.weapons then
         for _,weapon in pairs(uDef.weapons) do
             local wDef = WeaponDefs[weapon.name]
+            if not wDef then Spring.Echo(unitName, weapon.name) end
             wDef.customparams = wDef.customparams or {}
             if weapon.onlytargetcategory=="VTOL" then
                 wDef.customparams.antiair = true
@@ -224,7 +233,7 @@ for unitName,uDef in pairs(UnitDefs) do
                 wDef.customparams.hoverattack = true            
             end
             wDef.customparams.from_unit = true  
-            wDef.customparams.unit_buildcostenergy = uDef.buildcostenergy            
+            wDef.customparams.unit_buildcostenergy = uDef.buildcostenergy         
             wDef.customparams.unit_buildcostmetal = uDef.buildcostmetal
         end
     end
@@ -642,7 +651,7 @@ for _,uDef in pairs(UnitDefs) do
     
     uDef.name = "\255\255\1\1Horse\255\255\255\255 " .. uDef.name
     if math.random()<0.75 then
-        uDef.description = uDef.description .. " (horse)"
+        uDef.description = uDef.description and uDef.description .. " (horse)"
     end        
 end
 

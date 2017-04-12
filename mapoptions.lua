@@ -1,12 +1,12 @@
 local horse = {
 	{
 		key     = 'randomseed',
-		name    = 'Horse Random Seed',
-		desc    = 'Horse',
+		name    = 'Horse Random Seed Bunny Bunny Bunny',
+		desc    = 'Ignored if 0 (-> use synced seed from Spring)',
 		type    = 'number',
 		section = 'Horse',
-		def     = 1,
-		min     = 1,
+		def     = 0,
+		min     = 0,
 		max     = 999,
 		step    = 1,
 	},

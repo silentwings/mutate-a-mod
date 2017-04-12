@@ -4,7 +4,7 @@
 --
 
 local mapinfo = {
-	name        = "Christmas Horse v2",
+	name        = "Easter Bunny v1",
 	shortname   = "Horse",
 	description = "Just because I can give multiple orgasms to the furniture just by sitting on it, doesn't mean that I'm not sick of this damn war: the blood, the noise, the endless poetry.",
 	author      = "Horse",
@@ -21,13 +21,13 @@ local mapinfo = {
 	tidalStrength   = 0,
 	maxMetal        = 3.5,
 	extractorRadius = 90.0,
-	voidWater       = true,
+	voidWater       = false,
 	autoShowMetal   = true,
 
 
 	smf = {
-		minheight = 200,
-		maxheight = 1500,
+		minheight = -930,
+		maxheight = 1570,
 		--smtFileName0 = "",
 		--smtFileName1 = "",
 		--smtFileName.. = "",
@@ -103,23 +103,23 @@ local mapinfo = {
 		repeatX = 0.0,
 		repeatY = 0.0,
 
-		absorb    = {0.0, 0.0, 0.0},
-		baseColor = {0.0, 0.0, 0.0},
-		minColor  = {0.0, 0.0, 0.0},
+		absorb    = {0.004, 0.004, 0.002},
+		baseColor = {0.7, 0.95, 0.95},
+		minColor  = {0.6, 0.7, 0.8},
 
-		ambientFactor  = 1.0,
-		diffuseFactor  = 1.0,
-		specularFactor = 1.0,
-		specularPower  = 20.0,
+		ambientFactor  = 1.3,
+		--diffuseFactor  = 0.3,
+		specularFactor = 0.5,
+		specularPower  = 2.0,
 
-		planeColor = {0.0, 0.0, 0.0},
+		--planeColor = {0.0, 0.0, 0.0},
 
-		surfaceColor  = {0.75, 0.8, 0.85},
-		surfaceAlpha  = 0.55,
-		diffuseColor  = {1.0, 1.0, 1.0},
+		surfaceColor  = {0.8, 0.9, 0.95},
+		surfaceAlpha  = 0,
+		--diffuseColor  = {0.55, 0.4, 0.3},
 		specularColor = {0.5, 0.5, 0.5},
 
-		fresnelMin   = 0.2,
+		fresnelMin   = 0.3,
 		fresnelMax   = 0.8,
 		fresnelPower = 4.0,
 

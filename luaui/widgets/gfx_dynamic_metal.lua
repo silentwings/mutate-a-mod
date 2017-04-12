@@ -18,7 +18,8 @@ local mode
 function widget:Initialize()
 	if not WG.metalSpots then
 		Spring.Echo("<Lua Metal Decals> This widget requires the 'Metalspot Finder' widget to run.")
-		gadgetHandler:RemoveWidget(self)
+		widgetHandler:RemoveWidget(self)
+        return
 	end
 	
 	displayList = gl.CreateList(drawPatches)
