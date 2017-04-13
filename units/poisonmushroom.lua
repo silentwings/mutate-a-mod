@@ -61,7 +61,6 @@ return {
 				shieldradius = 200,
 				shieldrepulser = false,
 				shieldstartingpower = 1000,
-				smart = true,
 				smartshield = true,
 				visibleshield = true,
 				visibleshieldhitframes = 20,

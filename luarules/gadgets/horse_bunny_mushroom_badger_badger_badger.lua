@@ -15,7 +15,7 @@ if not gadgetHandler:IsSyncedCode() then
     return false
 end
 
-local VERBOSE = true
+local VERBOSE = false
 local gaiaTeamID = Spring.GetGaiaTeamID()
 
 local minProximity = 50
@@ -27,9 +27,9 @@ local resampleWantedUnits = (30*60)*8 -- in gameframes
 local minUnitHeight = 2
 local maxUnitHeight = 85
 
-local mushroomIdleSeconds = VERBOSE and 1 or 30 
+local mushroomIdleSeconds = VERBOSE and 1 or 50 
 local mushroomWalkSeconds = VEBOSE and 1 or 10 
-local unitCreationIdleSeconds = VERBOSE and 1 or 10
+local unitCreationIdleSeconds = VERBOSE and 1 or 4
 
 local wantedUnits = 0
 
@@ -76,7 +76,6 @@ local function countTable(t)
     return n
 end
 
-
 -------------------------
 -- mushroom motion
 
@@ -103,9 +102,9 @@ function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weap
     end
 end
 
-local function GoForAWalk(cID)
+local function GoForAWalk(uID)
     if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " going for a walk") end
-    local x,y,z = Spring.GetUnitPosition(cID)
+    local x,y,z = Spring.GetUnitPosition(uID)
     local theta = math.random(1,360) / 360 * (2*math.pi)
     local dx, dz = 512*math.sin(theta), 512*math.cos(theta)
     local nx, ny, nz = x+dx, Spring.GetGroundHeight(x+dx,z+dz), z+dz
@@ -114,7 +113,7 @@ local function GoForAWalk(cID)
         return
     end
     if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is going for a walk", nx, ny, nz) end
-    Spring.GiveOrderToUnit(cID, CMD.MOVE, {nx,ny,nz}, {})    
+    Spring.GiveOrderToUnit(uID, CMD.MOVE, {nx,ny,nz}, {})    
 end
 
 local function MushroomMotion(n)
@@ -185,7 +184,7 @@ local function PlaceTree(x, z)
 end
 
 local function PlaceGrassCluster(n, r, cx, cy)
-    Spring.Echo("trying to place grass cluster")
+    if VERBOSE then Spring.Echo("trying to place grass cluster") end
     for i=1,n do
         local theta = math.random()*2*math.pi
         local s = r * (1-0.9*math.random())
@@ -248,7 +247,7 @@ end
 function gadget:Initialize()
 end
 
-function gadget:UnitDestroyed()
+function gadget:UnitDestroyed(unitID)
     units[unitID]=nil
     mushrooms[unitID]=nil
 end

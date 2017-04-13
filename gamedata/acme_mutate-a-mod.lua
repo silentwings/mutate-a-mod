@@ -16,6 +16,14 @@ local randomSeed = mapOptions and mapOptions.randomseed or 0
 local VERBOSE = false
 
 Spring.Echo("HORSE MODE ACTIVATED (random horse seed " .. randomSeed .. ")")
+if DEFS == nil then
+    Spring.Echo("HORSE MODE HAS GONE UP THE KYBER PASS")
+    return "sensible horse"
+end
+
+local function IsSpecialUnit(uDef)
+    return uDef.customparams and (uDef.customparams.tree or uDef.customparams.mushroom or uDef.customparams.shrub) 
+end
 
 ------------------ 
 -- HELPERS
@@ -218,10 +226,23 @@ local WeaponDefs = DeepCopy(DEFS.weaponDefs)
 UnitDefs = LowerKeys(UnitDefs)
 WeaponDefs = LowerKeys(WeaponDefs)
 
+DeathExplosions = {}
+
 -- extract horse 
 for unitName,uDef in pairs(UnitDefs) do
     uDef.buildcostenergy = uDef.buildcostenergy or 0
     uDef.buildcostmetal = uDef.buildcostmetal or 0
+
+    local cost = uDef.buildcostenergy + uDef.buildcostmetal
+    if cost<4500 then
+        if uDef.explodeas then 
+            DeathExplosions[#DeathExplosions+1] = uDef.explodeas
+        end
+        if uDef.selfdestructas then 
+            DeathExplosions[#DeathExplosions+1] = uDef.selfdestructas
+        end
+    end
+    
     if uDef.weapons then
         for _,weapon in pairs(uDef.weapons) do
             local wDef = WeaponDefs[weapon.name]
@@ -238,6 +259,8 @@ for unitName,uDef in pairs(UnitDefs) do
         end
     end
 end
+
+
 
 local WeaponDefs_Original = DeepCopy(WeaponDefs) 
 
@@ -588,6 +611,11 @@ local function MutilateUnitDef(uDef, horseFactor)
     return u
 end
 
+local function MutilateSpecialUnitDef(uDef)
+    uDef.explodeas = SampleFromTable(DeathExplosions)
+    uDef.selfdestructas = SampleFromTable(DeathExplosions)
+end
+
 ------------------ 
 -- MULTIPLE HORSEGASMS
 ------------------ 
@@ -620,7 +648,7 @@ for _,uDef in pairs(UnitDefs) do
     local e = 0
     local m = 0
     local n = 0
-    if uDef.weapons then
+    if uDef.weapons and not IsSpecialUnit(uDef) then
         for _,weapon in pairs(uDef.weapons) do
             local oldName = weapon.name
             local cat = CatsByWeaponName[oldName]
@@ -645,8 +673,14 @@ for _,uDef in pairs(UnitDefs) do
     end
     
     --Spring.Echo(uDef.maxdamage)
-    uDef = MutilateUnitDef(uDef, 0.15) -- fixme?
+    if not IsSpecialUnit(uDef) then
+        uDef = MutilateUnitDef(uDef, 0.15) -- fixme?
+    end
     --Spring.Echo(uDef.maxdamage)
+    
+    if IsSpecialUnit(uDef) then
+        MutilateSpecialUnitDef(uDef)
+    end
 
     
     uDef.name = "\255\255\1\1Horse\255\255\255\255 " .. uDef.name
@@ -664,7 +698,27 @@ DEFS.weaponDefs = WeaponDefs
 DEFS.horseDefs = HorseDefs
 Horse = true or Horse
 
+
+
+------------------ 
+-- Insert horseDef
+------------------ 
+
+local MoveDefs = DeepCopy(DEFS.moveDefs)
+horseMoveDef = {
+        name            =   "bot2x2",
+        footprintX      =   2,
+        footprintZ      =   2,
+        maxWaterDepth   =   0,
+        maxSlope        =   12,
+        crushStrength   =   5,
+        heatmapping     =   false,
+    }
+MoveDefs[#MoveDefs+1] = horseMoveDef
+DEFS.moveDefs = MoveDefs
+
 return "truffle pate with a mornay sauce"
+
 
 
 

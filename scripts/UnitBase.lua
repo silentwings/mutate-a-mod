@@ -401,7 +401,8 @@ end
 function script.Killed(recentDamage, maxHealth)
 	local severity = 1 
 	local spawnx, spawny, spawnz = Spring.GetUnitPosition(unitID)
-	Spring.SpawnCEG("red_pop", spawnx, spawny, spawnz, 0, 0, 0, 0)
+    local h = Spring.GetUnitHeight(unitID)
+	Spring.SpawnCEG("red_pop", spawnx, spawny+h, spawnz, 0, 0, 0, 0)
 
 	if	type(deathAnimation) == "function" then
 		deathAnimation(deathAnimationPieces, deathData, recentDamage, maxHealth)

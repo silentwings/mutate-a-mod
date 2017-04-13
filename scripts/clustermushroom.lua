@@ -6,7 +6,7 @@ function script.Killed(recentDamage, maxHealth)
 		
 	local x,y,z = Spring.GetUnitPiecePosDir(unitID,cap);
 	Spring.SpawnCEG("redpop", x, y, z, 0, 2, 0, 10,10);
-	Spring.PlaySoundFile("sounds/clusterexplosion.wav", 10, x, y, z)
+	--Spring.PlaySoundFile("sounds/clusterexplosion.wav", 10, x, y, z)
 	
 	-- spawn small mushrooms on death
 	local x, y, z = Spring.GetUnitPosition(unitID)
