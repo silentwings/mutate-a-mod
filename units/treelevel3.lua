@@ -8,7 +8,7 @@ return {
 		canrepeat = false,
 		category = "TREE",
 		collisionvolumeoffsets = "0 -10 0",
-		collisionvolumescales = "100 120 100",
+		collisionvolumescales = "100 185 100",
 		collisionvolumetype = "cylY",
 		footprintx = 2,
 		footprintz = 2,

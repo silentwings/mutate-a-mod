@@ -16,7 +16,10 @@ if not gadgetHandler:IsSyncedCode() then
 end
 
 local CEGs = {
-    "red_pop"
+    "red_pop",
+    "red_pop2",
+    "red_pop3",
+    "red_pop4",
 }
 
 local specialUnits = {
@@ -33,7 +36,6 @@ local function SampleFromArrayTable(t)
     if #t==0 then Spring.Echo("sampling from empty table") end
     local n = #t
     local m = 1+math.floor(math.random()*n)
-    Spring.Echo(m, t[m], #t)
     return t[m]
 end
 

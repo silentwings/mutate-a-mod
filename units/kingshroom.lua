@@ -10,7 +10,7 @@ return {
 		canpatrol = 1,
 		canstop = 1,
 		collisionvolumeoffsets = "0 16 0",
-		collisionvolumescales = "64 64 64",
+		collisionvolumescales = "270 270 270",
 		collisionvolumetype = "sphere",
 		explodeas = "mushroompop",
 		footprintx = 10,

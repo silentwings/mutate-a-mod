@@ -19,8 +19,8 @@ animations = {
 		
 		
 		while( 1 ) do
-			CustomEmitter( modelParts["rightFoot"], animData["dirt"])	
-
+			CustomEmitter( modelParts["leftFoot"], animData["dirt"])	
+            
 			Turn(modelParts["rightFoot"], x_axis, math.rad(-60), math.rad(70 * speedMult))
 			Turn(modelParts["leftFoot"], x_axis, math.rad(30), math.rad(70 * speedMult))
 				

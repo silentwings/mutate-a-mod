@@ -40,7 +40,7 @@ local mushrooms = {}
 
 local mushroomTypes = {
     -- mushrooms
-    "bigmushroom", "bombmushroom", "mushroomcluster", "normalmushroom", "poisonmushroom", "smallmushroom",
+    "bigmushroom", "mushroomcluster", "normalmushroom", "poisonmushroom", "smallmushroom", -- bombmushroom, kingmushroom  
 }
 local treeTypes = {
     -- trees
