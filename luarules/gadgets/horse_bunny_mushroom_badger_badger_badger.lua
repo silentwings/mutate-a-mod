@@ -82,21 +82,21 @@ end
 
 local function RunAway(uID)
     local eID = Spring.GetUnitNearestEnemy(uID)
-    if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " trying to runn away from unit " .. tostring(eID)) end
+    if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " trying to run away from unit " .. tostring(eID)) end
     if eID then
-        local cx,cy,cz = Spring.GetUnitPosition(cID)
+        local cx,cy,cz = Spring.GetUnitPosition(uID)
         local x,y,z = Spring.GetUnitPosition(eID)
         local r = math.sqrt((x-cx)^2+(y-cy)^2+(z-cz)^2)
         local nx, ny, nz = (cx-x)/r, (cy-y)/r, (cz-z)/r --unit normal vector in perpendicular direction to eID
         local s = 200
         local px, py, pz = nx*s, ny*s, nz*s
-        Spring.GiveOrderToUnit(cID, CMD.MOVE, {px,py,pz}, {})
+        Spring.GiveOrderToUnit(uID, CMD.MOVE, {px,py,pz}, {})
     end
     return
 end
 
 function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weaponDefID, projectileID, attackerID, attackerDefID, attackerTeam)
-    if mushrooms[unitID] and Spring.ValidUnitID(unitID) and math.random()<0.5 then
+    if mushrooms[unitID] and Spring.ValidUnitID(unitID) and math.random()<0.9 then
         RunAway(unitID)
         return
     end
