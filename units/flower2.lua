@@ -12,6 +12,7 @@ return {
 		footprintx = 1,
 		footprintz = 1,
 		mass = 1000000,
+		maxdamage = 150,
 		name = "Flower2",
 		objectname = "flower2.dae",
 		pushresistant = true,

@@ -14,7 +14,7 @@ return {
 		footprintz = 2,
 		idleautoheal = 0,
 		mass = 1000000,
-		maxdamage = 700,
+		maxdamage = 1500,
 		name = "Tree Level 3",
 		objectname = "treelevel3.dae",
 		pushresistant = true,

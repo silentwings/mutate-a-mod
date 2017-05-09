@@ -6,7 +6,7 @@
 -- HORSE HORSE HORSE HORSE HORSE HORSE
 -- HORSE GENTLMEN HAVE IT BOYS
 -- IN-HORSE-GESTION
--- (repeat ad infinitum)
+-- (repeat ad infinitum horse)
 
 local	resources = {
 	graphics = {

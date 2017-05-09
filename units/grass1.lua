@@ -12,6 +12,7 @@ return {
 		footprintx = 1,
 		footprintz = 1,
 		mass = 1000000,
+		maxdamage = 100,
 		name = "Grass1",
 		objectname = "grass1.dae",
 		pushresistant = true,

@@ -15,11 +15,11 @@ if not gadgetHandler:IsSyncedCode() then
     return false
 end
 
-local CEGs = {
+local loveCEGs = {
     "red_pop",
-    --"red_pop2",
-    --"red_pop3",
-    --"red_pop4",
+    "red_pop2",
+    "red_pop3",
+    "red_pop4",
 }
 
 local specialUnits = {
@@ -42,8 +42,8 @@ end
 function gadget:Initialize()
 end
 
-function RandomCEG(x,y,z, r,h)
-    local ceg = SampleFromArrayTable(CEGs)
+function RandomCEG(x,y,z, r,h, t)
+    local ceg = SampleFromArrayTable(t)
 	Spring.SpawnCEG(ceg, x, y+h, z, 0, 2, 0, 10,10);
 end
 
@@ -53,15 +53,21 @@ function Birth(unitID)
     local x,_,z = Spring.GetUnitPosition(unitID)
     local y = Spring.GetGroundHeight(x,z)
 
-    RandomCEG(x,y,z, r,h)
+    RandomCEG(x,y,z, r,h, loveCEGs)
 end
 
 function gadget:UnitCreated(unitID, uDID)
     if not specialUnits[UnitDefs[uDID].name] then return end
     Birth(unitID)
+    if math.random()<0.05 then 
+        Spring.SetUnitStealth(unitID, true) -- lol
+        Spring.SetUnitSonarStealth(unitID, true)
+    end 
+    Spring.SetUnitNeutral(unitID, true) -- don't allow attack (it's fuxxored and horse knows why)
+    Spring.SetUnitBlocking(unitID, true, true, true, true, false, false, false) -- horses
 end
 
---[[function Death(unitID)
+function Death(unitID)
     local r = Spring.GetUnitRadius(unitID)
     local h = Spring.GetUnitHeight(unitID)
     local x,z = Spring.GetUnitPosition(unitID)
@@ -71,5 +77,5 @@ end
 function gadget:UnitDestroyed(unitID, uDID)
     if not specialUnits[UnitDefs[uDID].name] then return end
     Death(unitID)
-end]]
+end
 
