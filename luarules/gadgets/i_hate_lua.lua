@@ -17,9 +17,9 @@ end
 
 local CEGs = {
     "red_pop",
-    "red_pop2",
-    "red_pop3",
-    "red_pop4",
+    --"red_pop2",
+    --"red_pop3",
+    --"red_pop4",
 }
 
 local specialUnits = {

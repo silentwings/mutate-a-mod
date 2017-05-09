@@ -5,7 +5,7 @@ function script.Killed(recentDamage, maxHealth)
 		
 	local x,y,z = Spring.GetUnitPiecePosDir(unitID,cap);
     local h = Spring.GetUnitHeight(unitID)
-    Spring.SpawnCEG("redpop", x, y+h, z, 0, 2, 0, 10,10);
+    Spring.SpawnCEG("red_pop", x, y+h, z, 0, 2, 0, 10,10);
 	
 	return 0
 end

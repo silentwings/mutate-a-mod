@@ -6,7 +6,7 @@ return {
 		canmove = false,
 		canpatrol = false,
 		canrepeat = false,
-		collisionvolumeoffsets = "0 16 0",
+		collisionvolumeoffsets = "0 11 0",
 		collisionvolumescales = "14 32 14",
 		collisionvolumetype = "CylY",
 		footprintx = 1,
