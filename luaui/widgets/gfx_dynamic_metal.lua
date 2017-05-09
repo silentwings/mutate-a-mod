@@ -25,7 +25,27 @@ function widget:Initialize()
 	displayList = gl.CreateList(drawPatches)
 end
 
-function drawPatches()
+local decals = {
+    --[1] = "luaui/images/bunny.png",
+    --[2] = "luaui/images/bunny_flipped.png",    
+    --[3] = "luaui/images/horse.png",
+    --[4] = "luaui/images/horse_flipped.png",
+    [1] = "luaui/images/egg_1.png",
+    [2] = "luaui/images/egg_2.png",
+    [3] = "luaui/images/egg_3.png",
+    [4] = "luaui/images/egg_4.png",
+    [5] = "luaui/images/egg_5.png",
+    [6] = "luaui/images/egg_6.png",
+}
+
+local function SampleFromArrayTable(t)
+    if #t==0 then Spring.Echo("sampling from empty table") end
+    local n = #t
+    local m = 1+math.floor(math.random()*n)
+    return t[m]
+end
+
+function drawPatches(decal)
 	local mSpots = WG.metalSpots
 	
 	-- Switch to texture matrix mode
@@ -34,15 +54,12 @@ function drawPatches()
     gl.PolygonOffset(-25, -2)
     gl.Culling(GL.BACK)
     gl.DepthTest(true)
-    if math.random()<0.5 then
-        gl.Texture("luaui/images/horse.png")
-	else
-        gl.Texture("luaui/images/horse_flipped.png")    
-    end
-    gl.Color(1, 1, 1, 0.68) -- fix color from other widgets
 	
 	for i = 1, #mSpots do
-		local metal_rotation = math.random(0, 360)
+        gl.Texture(SampleFromArrayTable(decals))
+        gl.Color(1, 1, 1, 0.9) -- fix color from other widgets
+
+        local metal_rotation = math.random(0, 360)
 		gl.PushMatrix()
 		gl.Translate(0.5, 0.5, 0)
 		gl.Rotate( metal_rotation, 0, 0, 1)   
