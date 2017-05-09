@@ -1,7 +1,7 @@
 function gadget:GetInfo()
     return {
         name      = "Ape Ape McGiblet",
-        desc      = "fur balls",
+        desc      = "furry balls",
         author    = "",
         date      = "",
         license   = 42,
@@ -91,12 +91,13 @@ local function RunAway(uID)
         local s = 200
         local px, py, pz = nx*s, ny*s, nz*s
         Spring.GiveOrderToUnit(uID, CMD.MOVE, {px,py,pz}, {})
+        mushrooms[uID] = "run"
     end
     return
 end
 
 function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weaponDefID, projectileID, attackerID, attackerDefID, attackerTeam)
-    if mushrooms[unitID] and Spring.ValidUnitID(unitID) and math.random()<0.9 then
+    if mushrooms[unitID] and mushrooms[unitID]~="run" and Spring.ValidUnitID(unitID) and math.random()<0.9 then
         RunAway(unitID)
         return
     end

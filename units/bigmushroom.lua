@@ -4,7 +4,7 @@ return {
 		brakerate = 0.1,
 		builder = 0,
 		buildpic = "bigmushroom.png",
-		canattack = 1,
+		canattack = false,
 		canguard = 1,
 		canmove = 1,
 		canpatrol = 1,
