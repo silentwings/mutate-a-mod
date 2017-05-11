@@ -2,6 +2,8 @@ return {
 	normalmushroom = {
 		acceleration = 0.2,
 		brakerate = 0.1,
+		buildcostenergy = 1,
+		buildcostmetal = 1,
 		builder = 0,
 		buildpic = "normalmushroom.png",
 		canattack = false,

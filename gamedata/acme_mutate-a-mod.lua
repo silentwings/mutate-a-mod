@@ -480,6 +480,8 @@ end
 
 local function MutilateStarburstLauncher(wDef, horseFactor)
     wDef.weapontimer = MutilateTag("floatif", wDef.weapontimer, 0.1)
+    wDef.range = MutilateTag("floatif", wDef.range, 0.2)
+    wDef.areaofeffect = MutilateTag("floatif", wDef.areaofeffect, 0.25)
 end
 
 local function MutilateMissileLauncher(wDef, horseFactor)
@@ -533,7 +535,7 @@ local function MutilateWeaponDef(wDef, horseFactor)
 
     -- horse generic stuff
     for tag,t in pairs(toChooseTagsW) do
-        if w.weapontype=="TorpedoLauncher" or w.weapontype=="MissileLauncher" then break end -- these are too much trouble, they don't fire after the slightest horse modification
+        if w.weapontype=="TorpedoLauncher" or w.weapontype=="MissileLauncher" or w.weapontype=="StarburstLauncher" then break end -- these are too much trouble, they don't fire after the slightest horse modification
         --Spring.Echo(tag, wDef.name, wDef[tag])
         w[tag] = MutilateTag(t, wDef[tag], horseFactor)
     end

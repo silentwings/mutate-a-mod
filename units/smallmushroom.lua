@@ -2,6 +2,8 @@ return {
 	smallmushroom = {
 		acceleration = 0.8,
 		brakerate = 0.1,
+		buildcostenergy = 1,
+		buildcostmetal = 1,
 		builder = 0,
 		buildpic = "smallmushroom.png",
 		canattack = false,

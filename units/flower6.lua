@@ -2,6 +2,8 @@ return {
 	flower6 = {
 		blocking = false,
 		buildpic = "flower6.png",
+		buildcostenergy = 1,
+		buildcostmetal = 1,
 		canguard = false,
 		canmove = false,
 		canpatrol = false,

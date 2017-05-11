@@ -1,6 +1,8 @@
 return {
 	treelevel3 = {
 		blocking = false,
+		buildcostenergy = 1,
+		buildcostmetal = 1,
 		buildpic = "treelevel3.png",
 		canguard = false,
 		canmove = false,

@@ -1,6 +1,8 @@
 return {
 	grass4 = {
 		blocking = false,
+		buildcostenergy = 1,
+		buildcostmetal = 1,
 		buildpic = "grass4.png",
 		canguard = false,
 		canmove = false,
