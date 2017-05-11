@@ -41,6 +41,7 @@ local mushrooms = {}
 local mushroomTypes = {
     -- mushrooms
     "bigmushroom", "mushroomcluster", "normalmushroom", "poisonmushroom", "smallmushroom", -- bombmushroom, kingmushroom  
+    "critter_penguin",
 }
 local treeTypes = {
     -- trees
@@ -90,7 +91,12 @@ local function RunAway(uID)
         local nx, ny, nz = (cx-x)/r, (cy-y)/r, (cz-z)/r --unit normal vector in perpendicular direction to eID
         local s = 200
         local px, py, pz = nx*s, ny*s, nz*s
-        Spring.GiveOrderToUnit(uID, CMD.MOVE, {px,py,pz}, {})
+        local gy = Spring.GetGroundHeight(px,pz)
+        if not gy or gy<0 then 
+            if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is not running", px, gy, pz) end
+            return 
+        end
+        Spring.GiveOrderToUnit(uID, CMD.MOVE, {px,gy,pz}, {})
         mushrooms[uID] = "run"
     end
     return
@@ -109,12 +115,32 @@ local function GoForAWalk(uID)
     local theta = math.random(1,360) / 360 * (2*math.pi)
     local dx, dz = 512*math.sin(theta), 512*math.cos(theta)
     local nx, ny, nz = x+dx, Spring.GetGroundHeight(x+dx,z+dz), z+dz
-    if ny<=0 then  
+    if ny==nil or ny<0 then  
         if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is not going for a walk", nx, ny, nz) end
         return
     end
     if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is going for a walk", nx, ny, nz) end
     Spring.GiveOrderToUnit(uID, CMD.MOVE, {nx,ny,nz}, {})    
+end
+
+local function ChaseAfterSomething(unitID)
+    local eID = Spring.GetUnitNearestEnemy(uID)
+    if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " trying to chase unit " .. tostring(eID)) end
+    if eID then
+        local cx,cy,cz = Spring.GetUnitPosition(uID)
+        local x,y,z = Spring.GetUnitPosition(eID)
+        local r = math.min(200, math.sqrt((x-cx)^2+(y-cy)^2+(z-cz)^2))
+        local theta = math.random()*2*math.pi
+        local px,pz = x+r*math.sin(theta),y+r*math.cos(theta)
+        local gy = Spring.GetGroundHeight(px,pz)
+        if not gy  or gy<0 then 
+            if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is not running", px, gy, pz) end
+            return 
+        end
+        Spring.GiveOrderToUnit(uID, CMD.MOVE, {px,gy,pz}, {})
+        mushrooms[uID] = "chase"    
+    end
+    return
 end
 
 local function MushroomMotion(n)
@@ -125,8 +151,13 @@ local function MushroomMotion(n)
             if state=="walk" then
                 GoForAWalk(unitID)
                 if math.random()<1/mushroomWalkSeconds then mushrooms[unitID]="idle" end
+            elseif state=="chase" then
+                ChaseAfterSomething(unitID)
+                if math.random()<1/mushroomWalkSeconds then mushrooms[unitID]="idle" end            
             else 
-                if math.random()<1/mushroomIdleSeconds then mushrooms[unitID]="walk" end
+                if math.random()<1/mushroomIdleSeconds then 
+                    mushrooms[unitID] = (math.random()<0.1) and "chase" or "walk" 
+                end
             end
         end    
     end    

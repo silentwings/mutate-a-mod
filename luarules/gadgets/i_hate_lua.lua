@@ -11,9 +11,9 @@ function gadget:GetInfo()
 end
 
 
-if not gadgetHandler:IsSyncedCode() then
-    return false
-end
+if gadgetHandler:IsSyncedCode() then
+-----------------------------------
+
 
 local loveCEGs = {
     "red_pop",
@@ -57,7 +57,7 @@ function Birth(unitID)
 end
 
 function gadget:UnitCreated(unitID, uDID)
-    if not specialUnits[UnitDefs[uDID].name] then return end
+    if not specialUnits[UnitDefs[uDID].name] then return end    
     Birth(unitID)
     if math.random()<0.05 then 
         Spring.SetUnitStealth(unitID, true) -- lol
@@ -79,3 +79,39 @@ function gadget:UnitDestroyed(unitID, uDID)
     Death(unitID)
 end
 
+-----------------------
+else
+-----------------------
+
+local specialUnits = {
+    -- mushrooms
+    ["bigmushroom"]=true, ["bombmushroom"]=true, ["mushroomcluster"]=true, ["normalmushroom"]=true, ["poisonmushroom"]=true, ["smallmushroom"]=true,
+    -- trees
+    ["treelevel1"]=true, ["treelevel2"]=true, ["treelevel3"]=true,
+    -- flowers & grass
+    ["flower1"]=true, ["flower2"]=true, ["flower3"]=true, ["flower4"]=true, ["flower5"]=true,
+    ["grass1"]=true, ["grass2"]=true, ["grass3"]=true, ["grass4"]=true, ["grass5"]=true, 
+}
+
+local CMD_MOVE = CMD.MOVE
+local spGetMouseState = Spring.GetMouseState
+local spTraceScreenRay = Spring.TraceScreenRay
+local spGetUnitDefID = Spring.GetUnitDefID
+
+local mx,my,s,uID,sDefID
+function gadget:DefaultCommand()
+	mx,my = spGetMouseState()
+	s,uID = spTraceScreenRay(mx,my)
+	if s ~= "unit" then return end
+	sDefID = spGetUnitDefID(uID)
+    if specialUnits[UnitDefs[sDefID].name] then 
+        local _,_,_,_,p = Spring.GetUnitHealth(uID)
+        if p==1 then
+            return CMD_MOVE
+        end
+    end
+	return
+end
+
+-----------
+end
