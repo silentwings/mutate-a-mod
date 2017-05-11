@@ -19,9 +19,9 @@ local VERBOSE = false
 local gaiaTeamID = Spring.GetGaiaTeamID()
 
 local minProximity = 50
-local maxUnits = 100 
-local midUnits = maxUnits/2
-local minUnits = 10
+local maxUnits = 110 
+local midUnits = 60
+local minUnits = 30
 local resampleWantedUnits = (30*60)*8 -- in gameframes 
 
 local minUnitHeight = 2
@@ -35,7 +35,8 @@ local wantedUnits = 0
 
 local units = {}
 local mushrooms = {}
--- units[unitID] = {dynamic=, x=,y=,z=, explosion=}
+
+local toKill = {}
 
 
 local mushroomTypes = {
@@ -123,7 +124,35 @@ local function GoForAWalk(uID)
     Spring.GiveOrderToUnit(uID, CMD.MOVE, {nx,ny,nz}, {})    
 end
 
-local function ChaseAfterSomething(unitID)
+local function GoForASaunter(uID)
+    if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " going for a saunter") end
+    local x,y,z = Spring.GetUnitPosition(uID)
+    local theta = math.random()*2*math.pi
+    local r = math.random()*250
+    local dx, dz = r*math.sin(theta), r*math.cos(theta)
+    local nx, ny, nz = x+dx, Spring.GetGroundHeight(x+dx,z+dz), z+dz
+    if ny==nil or ny<0 then  
+        if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is not going for a saunter", nx, ny, nz) end
+        return
+    end
+    if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is going for a saunter", nx, ny, nz) end
+    Spring.GiveOrderToUnit(uID, CMD.MOVE, {nx,ny,nz}, {})    
+end
+
+local function DoALittleJump(uID)
+    -- might help them get unstuck sometimes
+    if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is jumping for the skies") end
+    local dx = 0
+    local dz = 0
+    local dy = math.random()*math.random()*8
+    Spring.AddUnitImpulse(uID, dx,dy,dz, 0.05)
+end
+
+local function AlluhaAkbar(uID)
+    Spring.DestroyUnit(uID, true, false)
+end
+
+local function ChaseAfterSomething(uID)
     local eID = Spring.GetUnitNearestEnemy(uID)
     if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " trying to chase unit " .. tostring(eID)) end
     if eID then
@@ -153,14 +182,38 @@ local function MushroomMotion(n)
                 if math.random()<1/mushroomWalkSeconds then mushrooms[unitID]="idle" end
             elseif state=="chase" then
                 ChaseAfterSomething(unitID)
-                if math.random()<1/mushroomWalkSeconds then mushrooms[unitID]="idle" end            
-            else 
+                if math.random()<1/mushroomWalkSeconds then mushrooms[unitID]="idle" end   
+            else
                 if math.random()<1/mushroomIdleSeconds then 
                     mushrooms[unitID] = (math.random()<0.1) and "chase" or "walk" 
                 end
+                if math.random()<2/mushroomWalkSeconds then
+                    GoForASaunter(unitID)
+                end
+                if math.random()<1/mushroomIdleSeconds then
+                    DoALittleJump(unitID)
+                end
             end
         end    
+        local _,y,_ = Spring.GetUnitPosition(unitID)
+        if y<5 and math.random()<1/6 then
+            toKill[unitID] = true
+        end
     end    
+end
+
+local function Explosions(n)
+    for unitID,_ in pairs(units) do
+        if math.random()<1/6 and Spring.ValidUnitID(unitID) then
+            if math.random()<1/150 then --/(4*mushroomWalkSeconds) then
+                toKill[unitID] = true -- avoid removal during transversal because lua is massively hairy shit 
+            end
+        end
+    end
+    for unitID,_ in pairs(toKill) do
+        AlluhaAkbar(unitID)
+    end
+    toKill = {}
 end
 
 -------------------------
@@ -188,10 +241,7 @@ local function PlaceUnit(uDID, x,z, isMushroom)
         if VERBOSE then Spring.Echo("created", uDID, x, z) end
     else
         if VERBOSE then Spring.Echo("unit creation failed") end
-    end
-    
-    -- effects 
-    -- TODO
+    end    
 end
 
 local function PlaceGrass(x, z)
@@ -279,6 +329,13 @@ end
 function gadget:Initialize()
 end
 
+function gadget:UnitCreated(unitID, unitDefID)
+    if not UnitDefs[unitDefID].customParams.mushroom then return end
+    units[unitID] = true
+    mushrooms[unitID]="idle"
+    if VERBOSE then Spring.Echo("adopted", unitDefID, x, z) end
+end
+
 function gadget:UnitDestroyed(unitID)
     units[unitID]=nil
     mushrooms[unitID]=nil
@@ -287,6 +344,7 @@ end
 function gadget:GameFrame(n)
     if n%5==0 then
         MushroomMotion()
+        Explosions()
     end
     
     if n%30~=0 then return end    

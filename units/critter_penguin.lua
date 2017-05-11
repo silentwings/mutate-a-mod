@@ -54,5 +54,9 @@ return {
 		upright = false,
 		waterline = 6,
 		workertime = 0,
+        customparams = {
+            mushroom = true, -- oink
+            penguin = true,
+        }
 	},
 }

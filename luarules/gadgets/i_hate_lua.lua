@@ -1,7 +1,7 @@
 function gadget:GetInfo()
     return {
         name      = "Horsey McHorse",
-        desc      = "furry dongles",
+        desc      = "fairy dongles",
         author    = "",
         date      = "",
         license   = "yes",

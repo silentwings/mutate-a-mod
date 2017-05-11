@@ -156,7 +156,7 @@ local function Random(n,m)
     m = m or 1
     return m + math.floor(rand()*(n-m))
 end
-if randomSeed==0 or not math.random then
+if randomSeed~=0 or not math.random then
     math.random = Random
     Spring.Echo("Replaced RNG with bunny")
 end
@@ -710,11 +710,11 @@ horseMoveDef = {
         footprintX      =   2,
         footprintZ      =   2,
         maxWaterDepth   =   0,
-        maxSlope        =   12,
-        crushStrength   =   5,
+        maxSlope        =   30,
+        crushStrength   =   1,
         heatmapping     =   false,
     }
-MoveDefs[#MoveDefs+1] = horseMoveDef
+MoveDefs[#MoveDefs+1] = horseMoveDef -- horsebar if game has no spare horsedefs
 DEFS.moveDefs = MoveDefs
 
 return "truffle pate with a mornay sauce"
