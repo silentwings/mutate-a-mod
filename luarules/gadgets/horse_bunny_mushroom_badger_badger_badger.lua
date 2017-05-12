@@ -140,11 +140,12 @@ local function GoForASaunter(uID)
 end
 
 local function DoALittleJump(uID)
-    -- might help them get unstuck sometimes
+    -- might help them get unstuck sometimes, probably not but wth
+    -- does hilarious things to penguins
     if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is jumping for the skies") end
     local dx = 0
     local dz = 0
-    local dy = math.random()*math.random()*8
+    local dy = math.random()*math.random()*9
     Spring.AddUnitImpulse(uID, dx,dy,dz, 0.05)
 end
 
