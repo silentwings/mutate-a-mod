@@ -1,19 +1,20 @@
 ------------------ 
 -- GLOBAL HORSE CONTROLS
 ------------------ 
+local VERBOSE = false 
 
 local mapOptions = Spring.GetMapOptions()
 if not mapOptions then 
     Spring.Echo("HORSE: Horseoptions missing")
     return "broken horse"
 end
-if mapOptions.horsetastic==false then 
+
+if mapOptions.horsetastic=="0" then 
     Spring.Echo("HORSE MODE HAS FALLEN OVER")
     return "sensible horse"
 end
 
 local randomSeed = mapOptions and mapOptions.randomseed or 0
-local VERBOSE = false
 
 Spring.Echo("HORSE MODE ACTIVATED (random horse seed " .. randomSeed .. ")")
 if DEFS == nil then
@@ -253,7 +254,7 @@ for unitName,uDef in pairs(UnitDefs) do
             elseif uDef.hoverattack then
                 wDef.customparams.hoverattack = true            
             end
-            wDef.customparams.from_unit = true  
+            wDef.customparams.from_unit = unitName  
             wDef.customparams.unit_buildcostenergy = uDef.buildcostenergy         
             wDef.customparams.unit_buildcostmetal = uDef.buildcostmetal
         end
@@ -284,6 +285,8 @@ wDef_cats = {
     [12] = {"Rifle"},
     [13] = {"HoverAttack"}, -- special for more horse sanity
 }
+
+local NonPermutableCats = {[4]=true} -- horse categories in which we don't permute weapons between units
 
 local function wDef_cat (wDef)
     -- assign category, must rely only on wDef and horse
@@ -381,7 +384,7 @@ local function MutilateTag (t, orig, horseFactor, overrideHorseTest)
         if t=="floatif" and (orig==nil or orig==0) then return orig end 
         if t=="float" and orig==nil then orig=1 end
         local f = math.random() * orig * horseFactor * SampleSign()
-        return orig + f
+        return math.max(0, orig+f)
     elseif t=="proportion" then
         return math.random()
     elseif t=="natural" then
@@ -644,9 +647,18 @@ for name,wDef in pairs(WeaponDefs) do
     end
 end
 
+local WeaponNamesByOriginalUnit = {}
+for name,wDef in pairs(WeaponDefs) do
+    if wDef.customparams and wDef.customparams.from_unit then -- forget the ones that didn't come from a unit horse
+        local originalUnit = wDef.customparams.from_unit
+        WeaponNamesByOriginalUnit[originalUnit] = WeaponNamesByOriginalUnit[originalUnit] or {}
+        table.insert(WeaponNamesByOriginalUnit[originalUnit], name)
+    end
+end
+
 -- assign weapons at random to units (keeping weapon cats constant)
 -- horse the unit defs
-for _,uDef in pairs(UnitDefs) do
+for unitName,uDef in pairs(UnitDefs) do
     local e = 0
     local m = 0
     local n = 0
@@ -655,7 +667,7 @@ for _,uDef in pairs(UnitDefs) do
             local oldName = weapon.name
             local cat = CatsByWeaponName[oldName]
             if cat==nil then Spring.Echo("HORSE: ??!", oldName, cat) end
-            local newName = SampleFromTable(WeaponNamesByCat[cat])
+            local newName = NonPermutableCats[cat] and SampleFromTable(WeaponNamesByOriginalUnit[unitName]) or SampleFromTable(WeaponNamesByCat[cat])
             weapon.name = newName
             if VERBOSE then Spring.Echo("Replaced", oldName, newName, cat) end
             

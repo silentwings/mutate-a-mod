@@ -15,6 +15,13 @@ if not gadgetHandler:IsSyncedCode() then
     return false
 end
 
+local mapOptions = Spring.GetMapOptions()
+if mapOptions.horsetastic=="0" then 
+    Spring.Echo("HORSE MODE HAS FALLEN OVER, AGAIN")
+    return "sensible horse"
+end
+
+
 local VERBOSE = false
 local gaiaTeamID = Spring.GetGaiaTeamID()
 
