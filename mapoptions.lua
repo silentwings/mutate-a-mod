@@ -1,8 +1,8 @@
 local horse = {
 	{
 		key     = 'randomseed',
-		name    = 'Bunny Bunny Bunny',
-		desc    = 'Ignored if =0 (-> use synced horse from Spring)',
+		name    = 'Random Seed Bunny',
+		desc    = 'Ignored if =0 (-> use synced horse from Spring 104+)',
 		type    = 'number',
 		section = 'Horse',
 		def     = 0,
