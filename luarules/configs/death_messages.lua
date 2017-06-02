@@ -1,15 +1,15 @@
 -- eggy eggy eggy oi oi oi
 
 allyTeamDeathMessages = {
-    "XX got hard-boiled",
-    "XX got soft-boiled",
-    "XX got scrambled",
-    "XX got poached",
-    "XX got fried",
-    "XX got pickled",
-    "XX got curried",
-    "XX got whisked",
-    "XX got separated",
+    "XX has been hard-boiled",
+    "XX has been soft-boiled",
+    "XX has been scrambled",
+    "XX has been poached",
+    "XX has been fried",
+    "XX has been pickled",
+    "XX has been curried",
+    "XX has been whisked",
+    "XX has been separated",
 }	
 	
 teamDeathMessages = {

@@ -17,7 +17,7 @@ local mapinfo = {
 
 	maphardness     = 300,
 	notDeformable   = false,
-	gravity         = 110,
+	gravity         = 70,
 	tidalStrength   = 0,
 	maxMetal        = 3.5,
 	extractorRadius = 90.0,

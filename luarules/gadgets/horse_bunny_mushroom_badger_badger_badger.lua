@@ -31,6 +31,10 @@ local midUnits = 60
 local minUnits = 30
 local resampleWantedUnits = (30*60)*8 -- in gameframes 
 
+local freePenguins = 0 -- woooooo
+local queenTime = 30*60*(35+15*math.random())
+local queenFrenzy = false
+
 local minUnitHeight = 2
 local maxUnitHeight = 85
 
@@ -46,6 +50,10 @@ local mushrooms = {}
 local toKill = {}
 
 
+local chickenTypes = {
+    -- mushrooms
+    "ve_chickenq", "e_chickenq", "n_chickenq", "h_chickenq", "vh_chickenq", "epic_chickenq",
+}
 local mushroomTypes = {
     -- mushrooms
     "bigmushroom", "mushroomcluster", "normalmushroom", "poisonmushroom", "smallmushroom", -- bombmushroom, kingmushroom  
@@ -111,7 +119,7 @@ local function RunAway(uID)
 end
 
 function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weaponDefID, projectileID, attackerID, attackerDefID, attackerTeam)
-    if mushrooms[unitID] and mushrooms[unitID]~="run" and Spring.ValidUnitID(unitID) and math.random()<0.9 then
+    if mushrooms[unitID] and mushrooms[unitID]~="run" and Spring.ValidUnitID(unitID) and math.random()<0.9 and (not UnitDefs[unitDefID].customParams.chicken) then
         RunAway(unitID)
         return
     end
@@ -174,7 +182,7 @@ local function ChaseAfterSomething(uID)
             if VERBOSE then Spring.Echo("mushroom " .. tostring(uID) .. " is not running", px, gy, pz) end
             return 
         end
-        Spring.GiveOrderToUnit(uID, CMD.MOVE, {px,gy,pz}, {})
+        Spring.GiveOrderToUnit(uID, CMD.FIGHT, {px,gy,pz}, {})
         mushrooms[uID] = "chase"    
     end
     return
@@ -185,7 +193,7 @@ local function MushroomMotion(n)
     for unitID,state in pairs(mushrooms) do
         if math.random()<1/6 and Spring.ValidUnitID(unitID) then
             -- we reach here on avg once per sec per mushroom
-            if state=="walk" then
+            if state=="walk" then 
                 GoForAWalk(unitID)
                 if math.random()<1/mushroomWalkSeconds then mushrooms[unitID]="idle" end
             elseif state=="chase" then
@@ -198,13 +206,16 @@ local function MushroomMotion(n)
                 if math.random()<2/mushroomWalkSeconds then
                     GoForASaunter(unitID)
                 end
-                if math.random()<1/mushroomIdleSeconds then
+                if math.random()<1/mushroomIdleSeconds and (not UnitDefs[Spring.GetUnitDefID(unitID)].customParams.chicken) then
                     DoALittleJump(unitID)
                 end
             end
+            if units[unitID]=="idle" and queenFrenzy and UnitDefs[Spring.GetUnitDefID(unitID)].customParams.chicken then
+                ChaseAfterSomething(unitID)
+            end
         end    
         local _,y,_ = Spring.GetUnitPosition(unitID)
-        if y<5 and math.random()<1/6 then
+        if y<5 and math.random()<1/6 and not queenFrenzy then
             toKill[unitID] = true
         end
     end    
@@ -212,7 +223,7 @@ end
 
 local function Explosions(n)
     for unitID,_ in pairs(units) do
-        if math.random()<1/6 and Spring.ValidUnitID(unitID) then
+        if math.random()<1/6 and Spring.ValidUnitID(unitID) and (not UnitDefs[Spring.GetUnitDefID(unitID)].customParams.chicken) then
             if math.random()<1/150 then --/(4*mushroomWalkSeconds) then
                 toKill[unitID] = true -- avoid removal during transversal because lua is massively hairy shit 
             end
@@ -235,6 +246,21 @@ local function RandomFacing()
 	if n==4 then return "south" end
 end
 
+local function SampleLocation()
+    local maxTries = 20
+    for i=1,maxTries do
+        x = math.random() * Game.mapX * 512
+        z = math.random() * Game.mapY * 512
+        y = Spring.GetGroundHeight(x,z)
+        if y>minUnitHeight and y< maxUnitHeight then
+            local closeUnits = Spring.GetUnitsInCylinder(x,z,100)
+            if #closeUnits==0 then
+                return x,z
+            end               
+        end
+    end
+end
+
 local function PlaceUnit(uDID, x,z, isMushroom)
     local f = RandomFacing()
     local y = Spring.GetGroundHeight(x,z)
@@ -255,22 +281,42 @@ end
 local function PlaceGrass(x, z)
     local unitName = SampleFromArrayTable(grassTypes)
     local uDID = UnitDefNames[unitName].id
-    if VERBOSE then Spring.Echo("trying to place grass") end
+    if VERBOSE then Spring.Echo("trying to place penguin") end
     PlaceUnit(uDID, x, z)
+end
+
+local function PlacePenguin()
+    local unitName = "critter_penguin"
+    local uDID = UnitDefNames[unitName].id
+    local teamList = Spring.GetTeamList()
+    local teamID = SampleFromArrayTable(teamList)
+    if teamID == gaiaTeamID and queenFrenzy then return end
+    local x,z = SampleLocation()
+    local f = RandomFacing()
+    local y = queenFrenzy and Spring.GetGroundHeight(x,z)+10000 or Spring.GetGroundHeight(x,z) -- its raining penguins, hallelujah
+    local unitID = Spring.CreateUnit(uDID, x, y, z, f, teamID)
+    if unitID then
+        units[unitID] = true
+        if math.random()<0.5 then
+            ChaseAfterSomething(unitID)
+        else
+            GoForAWalk(unitID)
+        end
+    end
 end
 
 local function PlaceMushroom(x, z)
     local unitName = SampleFromArrayTable(mushroomTypes)
+    if queenFrenzy or math.random()<0.015 and Spring.GetGameFrame()>30*60*10 then
+        unitName = SampleFromArrayTable(chickenTypes) -- XD
+        if queenFrenzy or math.random()<0.5 then
+            local teamList = Spring.GetTeamList()
+            freePenguins = #teamList * math.random(7,20)-- penguin massacre
+        end
+    end
     local uDID = UnitDefNames[unitName].id
     if VERBOSE then Spring.Echo("trying to place mushroom") end
     PlaceUnit(uDID, x, z, true)
-end
-
-local function PlaceTree(x, z)
-    local unitName = SampleFromArrayTable(treeTypes)
-    local uDID = UnitDefNames[unitName].id
-    if VERBOSE then Spring.Echo("trying to place tree") end
-    PlaceUnit(uDID, x, z)
 end
 
 local function PlaceGrassCluster(n, r, cx, cy)
@@ -282,24 +328,16 @@ local function PlaceGrassCluster(n, r, cx, cy)
         local y = cy + s*math.sin(theta)
         PlaceGrass(x,y)
     end
-    if math.random()<0.25 then
-        PlaceTree(cx,cy)
-    end 
  end
 
-local function SampleLocation ()
-    local maxTries = 20
-    for i=1,maxTries do
-        x = math.random() * Game.mapX * 512
-        z = math.random() * Game.mapY * 512
-        y = Spring.GetGroundHeight(x,z)
-        if y>minUnitHeight and y< maxUnitHeight then
-            local closeUnits = Spring.GetUnitsInCylinder(x,z,100)
-            if #closeUnits==0 then
-                return x,z
-            end               
-        end
-    end
+local function PlaceTree(x, z)
+    local unitName = SampleFromArrayTable(treeTypes)
+    local uDID = UnitDefNames[unitName].id
+    if VERBOSE then Spring.Echo("trying to place tree") end
+    PlaceUnit(uDID, x, z)
+    if math.random()<0.85 then
+        PlaceGrassCluster(math.random(4,7), 170, x,z)
+    end 
 end
 
 local function PlaceRandom(cx, cy)
@@ -332,6 +370,13 @@ local function ResampleWantedUnits ()
     if VERBOSE then Spring.Echo("new wanted units: " .. tostring(wantedUnits)) end
 end
 
+local function PenguinMonitor()
+    if freePenguins>0 and math.random()<0.75 then
+        PlacePenguin()
+        freePenguins = freePenguins - 1
+    end
+end
+
 -------------------------
 
 function gadget:Initialize()
@@ -352,11 +397,16 @@ end
 function gadget:GameFrame(n)
     if n%5==0 then
         MushroomMotion()
+        PenguinMonitor()
         Explosions()
     end
     
     if n%30~=0 then return end    
-    if n%resampleWantedUnits==0 then ResampleWantedUnits() end
+    if n>=queenTime then 
+        queenFrenzy = true 
+        
+    end
 
+    if n%resampleWantedUnits==0 then ResampleWantedUnits() end    
     CheckCreateUnits()
 end

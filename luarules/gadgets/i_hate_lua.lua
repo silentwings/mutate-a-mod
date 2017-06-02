@@ -32,6 +32,8 @@ local specialUnits = {
     ["grass1"]=true, ["grass2"]=true, ["grass3"]=true, ["grass4"]=true, ["grass5"]=true, 
 }
 
+local penguinDID = UnitDefNames["critter_penguin"].id
+
 local function SampleFromArrayTable(t)
     if #t==0 then Spring.Echo("sampling from empty table") end
     local n = #t
@@ -67,16 +69,16 @@ function gadget:UnitCreated(unitID, uDID)
     Spring.SetUnitBlocking(unitID, true, true, true, true, false, false, false) -- horses
 end
 
-function Death(unitID)
+function Death(unitID, uDID)
     local r = Spring.GetUnitRadius(unitID)
     local h = Spring.GetUnitHeight(unitID)
-    local x,z = Spring.GetUnitPosition(unitID)
+    local x,_,z = Spring.GetUnitPosition(unitID)
     local y = Spring.GetGroundHeight(x,z)
 end
 
 function gadget:UnitDestroyed(unitID, uDID)
-    if not specialUnits[UnitDefs[uDID].name] then return end
-    Death(unitID)
+    --if not specialUnits[UnitDefs[uDID].name] then return end
+    --Death(unitID, uDID)
 end
 
 -----------------------

@@ -23,7 +23,7 @@ if DEFS == nil then
 end
 
 local function IsSpecialUnit(uDef)
-    return uDef.customparams and (uDef.customparams.tree or uDef.customparams.mushroom or uDef.customparams.shrub) 
+    return uDef.customparams and (uDef.customparams.tree or uDef.customparams.mushroom or uDef.customparams.shrub or uDef.customparams.chicken) 
 end
 
 ------------------ 
@@ -729,6 +729,16 @@ horseMoveDef = {
         heatmapping     =   false,
     }
 MoveDefs[#MoveDefs+1] = horseMoveDef -- horsebar if game has no spare horsedefs
+horseQueenMoveDef = {
+    name = "chickqueenHOVER",
+        footprintX      =   3,
+        footprintZ      =   3,
+        maxWaterDepth   =   500,
+        maxSlope        =   50,
+        crushStrength   =   10000,
+        heatmapping     =   false,
+}
+MoveDefs[#MoveDefs+1] = horseQueenMoveDef -- horsebar if game has no spare horsedefs
 DEFS.moveDefs = MoveDefs
 
 return "truffle pate with a mornay sauce"

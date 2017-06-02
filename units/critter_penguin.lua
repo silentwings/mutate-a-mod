@@ -15,7 +15,7 @@ return {
 		canstop = "1",
 		capturable = false,
 		category = "MOBILE NOWEAPON NOTAIR NOTSUB",
-		description = "so cool!",
+		description = "pheonrgsuein",
 		floater = true,
 		footprintx = 1,
 		footprintz = 1,
