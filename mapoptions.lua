@@ -13,7 +13,7 @@ local horse = {
 	{
 		key     = 'horsetastic',
 		name    = 'Horse Mutation',
-		desc    = 'Horse',
+		desc    = 'My cat wears a hat',
 		type    = 'bool',
 		section = 'Horse',
 		def     = true,
@@ -21,7 +21,23 @@ local horse = {
 	{
 		key     = 'honk',
 		name    = 'Honk',
-		desc    = 'This option does nothing, honest.',
+		desc    = 'This option does nothing (honestly).',
+		type    = 'bool',
+		section = 'Horse',
+		def     = true,
+	},
+	{
+		key     = 'honk2',
+		name    = 'Honk2',
+		desc    = 'This option used to do something but I am not sure what it does now.',
+		type    = 'bool',
+		section = 'Horse',
+		def     = true,
+	},
+	{
+		key     = 'honk3',
+		name    = 'Honk3',
+		desc    = 'Probably better not to touch this one.',
 		type    = 'bool',
 		section = 'Horse',
 		def     = true,

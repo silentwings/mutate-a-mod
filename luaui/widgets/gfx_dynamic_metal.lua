@@ -103,8 +103,11 @@ end
 
 function widget:DrawWorldPreUnit()
 	mode = Spring.GetMapDrawMode()
-	if(mode ~= "height" and mode ~= "metal") then
+	if mode ~= "height" and mode ~= "metal" then
 		gl.CallList(displayList)
-	end
-	
+        shown = true
+    elseif mode=="metal" and shown then
+        displayList = gl.CreateList(drawPatches)    
+        shown = false
+    end
 end
