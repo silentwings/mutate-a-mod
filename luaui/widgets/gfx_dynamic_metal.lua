@@ -12,7 +12,9 @@ end
 
 local displayList 		= 0
 local metalSpotWidth    = 64
-local metalSpotHeight   = 64
+local metalSpotHeight   = metalSpotWidth
+local santaSpotWidth    = 96
+local santaSpotHeight   = santaSpotWidth
 local mode
 
 function widget:Initialize()
@@ -38,6 +40,19 @@ local decals = {
     [6] = "luaui/images/egg_6.png",
 }
 
+local santas = {
+    [1] = "luaui/images/santa_1.tga",
+    [2] = "luaui/images/santa_2.tga",
+    [3] = "luaui/images/santa_3.tga",
+    [4] = "luaui/images/santa_4.tga",
+    [5] = "luaui/images/santa_5.tga",
+    [6] = "luaui/images/santa_6.tga",
+    [7] = "luaui/images/santa_7.tga",
+    [8] = "luaui/images/santa_8.tga",
+    [9] = "luaui/images/santa_9.tga",
+    [10] = "luaui/images/santa_10.tga",
+}
+
 local function SampleFromArrayTable(t)
     if #t==0 then Spring.Echo("sampling from empty table") end
     local n = #t
@@ -56,15 +71,25 @@ function drawPatches(decal)
     gl.DepthTest(true)
 	
 	for i = 1, #mSpots do
-        gl.Texture(SampleFromArrayTable(decals))
+        local santa = false
+        if math.random()<0.95 then
+            gl.Texture(SampleFromArrayTable(decals))
+        else
+            gl.Texture(SampleFromArrayTable(santas)) 
+            santa = true
+        end
         gl.Color(1, 1, 1, 0.9) -- fix color from other widgets
 
-        local metal_rotation = math.random(0, 360)
+        local metal_rotation = santa and 0 or math.random(0, 360)
 		gl.PushMatrix()
 		gl.Translate(0.5, 0.5, 0)
 		gl.Rotate( metal_rotation, 0, 0, 1)   
-		gl.DrawGroundQuad( mSpots[i].x - metalSpotWidth/2, mSpots[i].z - metalSpotHeight/2, mSpots[i].x + metalSpotWidth/2, mSpots[i].z + metalSpotHeight/2, false, -0.5,-0.5, 0.5,0.5)
-		gl.PopMatrix()
+        if santa then
+            gl.DrawGroundQuad( mSpots[i].x - santaSpotWidth/2, mSpots[i].z - santaSpotHeight/2, mSpots[i].x + santaSpotWidth/2, mSpots[i].z + santaSpotHeight/2, false, -0.5,-0.5, 0.5,0.5)
+		else
+            gl.DrawGroundQuad( mSpots[i].x - metalSpotWidth/2, mSpots[i].z - metalSpotHeight/2, mSpots[i].x + metalSpotWidth/2, mSpots[i].z + metalSpotHeight/2, false, -0.5,-0.5, 0.5,0.5)
+		end
+        gl.PopMatrix()
 		
 	end
     gl.Texture(false)

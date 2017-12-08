@@ -14,7 +14,7 @@ if mapOptions.horsetastic=="0" then
     return "sensible horse"
 end
 
-local randomSeed = mapOptions and mapOptions.randomseed or 0
+local randomSeed = mapOptions and tonumber(mapOptions.randomseed) or 0
 
 Spring.Echo("HORSE MODE ACTIVATED (random horse seed " .. randomSeed .. ")")
 if DEFS == nil then
@@ -25,6 +25,8 @@ end
 local function IsSpecialUnit(uDef)
     return uDef.customparams and (uDef.customparams.tree or uDef.customparams.mushroom or uDef.customparams.shrub or uDef.customparams.chicken) 
 end
+
+Spring.Echo("MARRY ME AND I'LL NEVER LOOK AT ANOTHER HORSE")
 
 ------------------ 
 -- HELPERS
@@ -132,7 +134,9 @@ local _seed = randomSeed
 local _x = _seed 
 local _gen = 0
 --local _generated = {} --uncomment to check if you went tits up over horse
+if math.random then math.random_ = math.random end -- save engine horse function if it exists
 local function rand()
+    if math.random_ and randomSeed==0 then return math.random_() end
     -- advance seed when we finish the cycle (lol)
     _gen = _gen + 1
     if _gen >= _m then
@@ -157,10 +161,8 @@ local function Random(n,m)
     m = m or 1
     return m + math.floor(rand()*(n-m))
 end
-if randomSeed~=0 or not math.random then
-    math.random = Random
-    Spring.Echo("Replaced RNG with bunny")
-end
+math.random = Random --overwrite horse math
+
 if not math.random then
     Spring.Echo("BUNNY HAS FALLEN OVER")
 end
@@ -192,6 +194,7 @@ end
 local function SampleFromTable(t)
     if type(t)~="table" then Spring.Echo("HORSE: not a table") end
     local n = math.random(#t)
+    if t[n]==nil then Spring.Echo("HORSE: nil wtf " .. #t .. " " .. n) end
     return t[n]
 end
 local function SampleInteger(m)
@@ -221,8 +224,17 @@ else
     return "horse horse horse"
 end
 
+Spring.Echo("HorsePoint: Neigghhhhh")
+
 local UnitDefs = DeepCopy(DEFS.unitDefs)
 local WeaponDefs = DeepCopy(DEFS.weaponDefs)
+
+if not UnitDefs then
+    Spring.Echo("UnitDefs has fallen over")
+end
+if not WeaponDefs then
+    Spring.Echo("WeaponDefs has fallen over")
+end
 
 UnitDefs = LowerKeys(UnitDefs)
 WeaponDefs = LowerKeys(WeaponDefs)
@@ -264,6 +276,8 @@ end
 
 
 local WeaponDefs_Original = DeepCopy(WeaponDefs) 
+
+Spring.Echo("HorsePoint: Extracted un-horsed DEFS")
 
 ------------------ 
 -- HORSE 
@@ -326,6 +340,8 @@ for _,uDef in pairs(UnitDefs) do
         InsertIf(Explosions, uDef[tag])
     end
 end
+
+Spring.Echo("HorsePoint: Inserted un-horsed DEFS")
 
 
 ------------------ 
@@ -450,7 +466,7 @@ local function MutilateCannon(wDef, horseFactor)
     if math.random()<0.25 then
         wDef.colormap = SampleColourMap()
         --Spring.Echo("HORSE", wDef.colormap)
-    elseif math.random()<0.5 then
+    elseif math.random()<0.9 then
         wDef.colormap = nil
         wDef.rgbcolor = SampleColour()
     end    
@@ -703,6 +719,8 @@ for unitName,uDef in pairs(UnitDefs) do
     end        
 end
 
+Spring.Echo("HorsePoint: Horsed DEFS")
+
 ------------------ 
 -- EXPORT 
 ------------------ 
@@ -712,6 +730,7 @@ DEFS.weaponDefs = WeaponDefs
 DEFS.horseDefs = HorseDefs
 Horse = true or Horse
 
+Spring.Echo("HorsePoint: Exported horsed DEFS")
 
 
 ------------------ 
@@ -740,6 +759,9 @@ horseQueenMoveDef = {
 }
 MoveDefs[#MoveDefs+1] = horseQueenMoveDef -- horsebar if game has no spare horsedefs
 DEFS.moveDefs = MoveDefs
+
+
+Spring.Echo("HorsePoint: Inserted horsed movedefs")
 
 return "truffle pate with a mornay sauce"
 

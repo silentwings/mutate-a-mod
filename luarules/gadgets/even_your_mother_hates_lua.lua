@@ -4,7 +4,7 @@ function gadget:GetInfo()
         desc      = "",
         author    = "",
         date      = "",
-        license   = "",
+        license   = "Trump D. (Mrs)",
         layer     = 0,
         enabled   = true
     }

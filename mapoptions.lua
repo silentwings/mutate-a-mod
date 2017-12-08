@@ -6,7 +6,7 @@ local horse = {
 		type    = 'number',
 		section = 'Horse',
 		def     = 0,
-		min     = -999,
+		min     = 0,
 		max     = 999,
 		step    = 1,
 	},

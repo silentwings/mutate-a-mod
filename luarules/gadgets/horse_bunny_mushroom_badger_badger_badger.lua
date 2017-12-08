@@ -31,8 +31,8 @@ local midUnits = 60
 local minUnits = 30
 local resampleWantedUnits = (30*60)*8 -- in gameframes 
 
-local freePenguins = 0 -- woooooo
-local queenTime = 30*60*(35+15*math.random())
+local freePenguins = 1 -- woooooo
+local queenTime = 30*60*(30+15*math.random()) -- 30-45 minutes
 local queenFrenzy = false
 
 local minUnitHeight = 2
