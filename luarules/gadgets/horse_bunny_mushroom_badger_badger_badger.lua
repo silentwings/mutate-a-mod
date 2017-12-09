@@ -1,6 +1,6 @@
 function gadget:GetInfo()
     return {
-        name      = "Ape Ape McGiblet",
+        name      = "Ape Ape McGiblet (Mrs)",
         desc      = "furry balls",
         author    = "",
         date      = "",
@@ -16,8 +16,8 @@ if not gadgetHandler:IsSyncedCode() then
 end
 
 local mapOptions = Spring.GetMapOptions()
-if mapOptions.horsetastic=="0" then 
-    Spring.Echo("HORSE MODE HAS FALLEN OVER, AGAIN")
+if mapOptions.mushroomtastic=="0" then 
+    Spring.Echo("MUSHROOM MODE HAS FALLEN OVER")
     return "sensible horse"
 end
 
@@ -31,8 +31,8 @@ local midUnits = 60
 local minUnits = 30
 local resampleWantedUnits = (30*60)*8 -- in gameframes 
 
-local freePenguins = 1 -- woooooo
-local queenTime = 30*60*(30+15*math.random()) -- 30-45 minutes
+local freePenguins = 0 -- woooooo
+local queenTime = 30*60*(22+28*math.random()*math.random()) -- bwahahah
 local queenFrenzy = false
 
 local minUnitHeight = 2
@@ -307,7 +307,7 @@ end
 
 local function PlaceMushroom(x, z)
     local unitName = SampleFromArrayTable(mushroomTypes)
-    if queenFrenzy or math.random()<0.015 and Spring.GetGameFrame()>30*60*10 then
+    if queenFrenzy or math.random()<0.02 and Spring.GetGameFrame()>30*60*10 then
         unitName = SampleFromArrayTable(chickenTypes) -- XD
         if queenFrenzy or math.random()<0.5 then
             local teamList = Spring.GetTeamList()

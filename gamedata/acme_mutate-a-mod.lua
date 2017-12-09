@@ -355,12 +355,12 @@ local ColourBank = {
     "1.0 1.0 0.0",
     "1.0 0.0 1.0",
     "0.0 1.0 1.0",
-    "1.0 0.5 1.0",
-    "0.5 1.0 1.0",
-    "1.0 1.0 0.5",
-    "0.5 0.5 1.0",
-    "1.0 0.5 0.5",
-    "0.5 1.0 0.5",
+    "1.0 0.0 0.5",
+    "0.5 0.0 1.0",
+    "1.0 0.5 0.0",
+    "0.5 1.0 0.0",
+    "0.0 0.5 1.0",
+    "0.0 1.0 0.5",
 }
 
 local function SampleColour ()
@@ -722,13 +722,13 @@ end
 Spring.Echo("HorsePoint: Horsed DEFS")
 
 ------------------ 
--- EXPORT 
+-- EXPORTABLE HORSE 
 ------------------ 
 
 DEFS.unitDefs = UnitDefs
 DEFS.weaponDefs = WeaponDefs
 DEFS.horseDefs = HorseDefs
-Horse = true or Horse
+Horse = true or Horse -- horse
 
 Spring.Echo("HorsePoint: Exported horsed DEFS")
 
@@ -761,7 +761,7 @@ MoveDefs[#MoveDefs+1] = horseQueenMoveDef -- horsebar if game has no spare horse
 DEFS.moveDefs = MoveDefs
 
 
-Spring.Echo("HorsePoint: Inserted horsed movedefs")
+Spring.Echo("HorsePoint: Exported horsed movedefs")
 
 return "truffle pate with a mornay sauce"
 
