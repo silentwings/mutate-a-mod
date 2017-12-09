@@ -17,7 +17,10 @@ end
 
 
 local loveCEGs = {
-    "dirt",
+    "dirt_hearts",
+    "dirt_hearts2"
+    "dirt_hearts3"
+    "dirt_hearts4"
 }
 
 local specialUnits = {

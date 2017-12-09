@@ -32,7 +32,7 @@ local minUnits = 30
 local resampleWantedUnits = (30*60)*8 -- in gameframes 
 
 local freePenguins = 0 -- woooooo
-local queenTime = 30*60*(22+28*math.random()*math.random()) -- bwahahah
+local queenTime = 1--30*60*(22+28*math.random()*math.random()) -- bwahahah
 local queenFrenzy = false
 
 local minUnitHeight = 2
@@ -289,8 +289,7 @@ local function PlacePenguin()
     local unitName = "critter_penguin"
     local uDID = UnitDefNames[unitName].id
     local teamList = Spring.GetTeamList()
-    local teamID = SampleFromArrayTable(teamList)
-    if teamID == gaiaTeamID and queenFrenzy then return end
+    local teamID = queenFrenzy and SampleFromArrayTable(teamList) or gaiaTeamID
     local x,z = SampleLocation()
     local f = RandomFacing()
     local y = queenFrenzy and Spring.GetGroundHeight(x,z)+10000 or Spring.GetGroundHeight(x,z) -- its raining penguins, hallelujah
