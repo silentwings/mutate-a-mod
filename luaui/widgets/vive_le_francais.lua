@@ -23,7 +23,13 @@ function IsItFrench(unitID)
 end
 
 function ViveLeFrance()
-    Spring.PlaySoundFile('luaui/sounds/le_marseillaise.ogg')
+    if math.random()<0.25 then
+        if math.random()<0.5 then
+            Spring.PlaySoundFile('luaui/sounds/le_marseillaise.ogg')
+        else
+            Spring.PlaySoundFile('luaui/sounds/le_marseillaise.ogg')
+        end
+    end
 end
 
 function widget:UnitDestroyed(unitID, unitDefID, unitTeam, attackerID, attackerDefID, attackerTeam)
