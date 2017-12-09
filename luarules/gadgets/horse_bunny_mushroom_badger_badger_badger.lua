@@ -252,7 +252,7 @@ local function SampleLocation()
         x = math.random() * Game.mapX * 512
         z = math.random() * Game.mapY * 512
         y = Spring.GetGroundHeight(x,z)
-        if y>minUnitHeight and y< maxUnitHeight then
+        if y>minUnitHeight and y<maxUnitHeight then
             local closeUnits = Spring.GetUnitsInCylinder(x,z,100)
             if #closeUnits==0 then
                 return x,z
@@ -403,7 +403,6 @@ function gadget:GameFrame(n)
     if n%30~=0 then return end    
     if n>=queenTime then 
         queenFrenzy = true 
-        
     end
 
     if n%resampleWantedUnits==0 then ResampleWantedUnits() end    
