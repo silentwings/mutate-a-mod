@@ -20,8 +20,8 @@ animations = {
 		
 		while( 1 ) do
 		
-			CustomEmitter( modelParts["RR"], animData["dirt"])	
-			CustomEmitter( modelParts["RL"], animData["dirt"])	
+			CustomEmitter( modelParts["RR"], animData["dirt_hearts"])	
+			CustomEmitter( modelParts["RL"], animData["dirt_hearts"])	
 
 			Turn(modelParts["RL"], x_axis, math.rad(-40), math.rad(40 * speedMult))
 			Turn(modelParts["FR"], x_axis, math.rad(-40), math.rad(40 * speedMult))
@@ -46,8 +46,8 @@ animations = {
 			Turn(modelParts["King"], z_axis, math.rad(6), math.rad(10 * speedMult))
 			Turn(modelParts["King"], x_axis, math.rad(-2), math.rad(10 * speedMult))
 			
-			CustomEmitter( modelParts["FR"], animData["dirt"])	
-			CustomEmitter( modelParts["FL"], animData["dirt"])
+			CustomEmitter( modelParts["FR"], animData["dirt_hearts"])	
+			CustomEmitter( modelParts["FL"], animData["dirt_hearts"])
 			Turn(modelParts["RR"], x_axis, math.rad(-40), math.rad(60 * speedMult))
 			Turn(modelParts["FL"], x_axis, math.rad(-40), math.rad(60 * speedMult))
 			Turn(modelParts["RL"], x_axis, math.rad(20), math.rad(40 * speedMult))
@@ -79,10 +79,10 @@ animations = {
 		Turn(modelParts["FR"], x_axis, math.rad(0), math.rad(70))
 		Sleep(50)
 		Move(modelParts["King"], y_axis, -2.8)	
-		CustomEmitter( modelParts["FR"], animData["dirt"])	
-		CustomEmitter( modelParts["FL"], animData["dirt"])
-		CustomEmitter( modelParts["FL"], animData["dirt"])	
-		CustomEmitter( modelParts["FR"], animData["dirt"])
+		CustomEmitter( modelParts["FR"], animData["dirt_hearts"])	
+		CustomEmitter( modelParts["FL"], animData["dirt_hearts"])
+		CustomEmitter( modelParts["FL"], animData["dirt_hearts"])	
+		CustomEmitter( modelParts["FR"], animData["dirt_hearts"])
 	end,
 	
 	getMovePieces = function ()
@@ -91,7 +91,7 @@ animations = {
 		
 		local pieces		= Spring.GetUnitPieceMap(unitID)
 		
-		moveData["dirt"]	= "dirt"
+		moveData["dirt_hearts"]	= "dirt_hearts"
 		
 		local partsList		= {	-- torso
 								'FR','FL','RR','RL','King','KingHead'}	

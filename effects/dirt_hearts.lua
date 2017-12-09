@@ -1,7 +1,7 @@
 -- love dirt
 
 return {
-  ["dirt"] = {
+  ["dirt_hearts"] = {
     dirt = {
       air                = true,
       class              = [[CSimpleParticleSystem]],
@@ -61,7 +61,7 @@ return {
       },
     },
   },
-  ["dirt2"] = {
+  ["dirt_hearts2"] = {
     dirt = {
       air                = true,
       class              = [[CSimpleParticleSystem]],
@@ -121,7 +121,7 @@ return {
       },
     },
   },
-  ["dirt3"] = {
+  ["dirt_hearts3"] = {
     dirt = {
       air                = true,
       class              = [[CSimpleParticleSystem]],

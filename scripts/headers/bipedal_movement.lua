@@ -30,7 +30,7 @@ animations = {
 		Turn(mechParts["thigh_l"], y_axis, 0, math.rad(130))
 		
 		while( 1 ) do
-			CustomEmitter( mechParts["foot_r"], animData["dirt"])	
+			CustomEmitter( mechParts["foot_r"], animData["dirt_hearts"])	
 			if (isAiming == false) then
 				if (animData["leftArmAnim"] == true ) then
 					Turn(mechParts["shoulder_l"], x_axis, math.rad(-5), math.rad(25 * speedMult))
@@ -53,7 +53,7 @@ animations = {
 				
 			Turn(mechParts["shin_r"], x_axis, math.rad(10), math.rad(185 * speedMult))
 			
-			CustomEmitter( mechParts["foot_l"], animData["dirt"])		
+			CustomEmitter( mechParts["foot_l"], animData["dirt_hearts"])		
 			if (isAiming == false) then
 				if (animData["rightArmAnim"] == true ) then
 					Turn(mechParts["shoulder_r"], x_axis, math.rad(-5), math.rad(25 * speedMult))
@@ -141,7 +141,7 @@ animations = {
 		moveData["leftArmAnim"]		= true
 		moveData["rightArmAnim"]	= true
 		
-		moveData["dirt"]	= "dirt"
+		moveData["dirt_hearts"]	= "dirt_hearts"
 		
 		local partsList		= {	-- torso
 								'base',	'cod',

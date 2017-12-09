@@ -19,7 +19,7 @@ animations = {
 		
 		
 		while( 1 ) do
-			CustomEmitter( modelParts["rightFoot"], animData["dirt"])	
+			CustomEmitter( modelParts["rightFoot"], animData["dirt_hearts"])	
 
 			Turn(modelParts["rightFoot"], x_axis, math.rad(-60), math.rad(70 * speedMult))
 			Turn(modelParts["leftFoot"], x_axis, math.rad(30), math.rad(70 * speedMult))
@@ -32,8 +32,8 @@ animations = {
 			Turn(modelParts["Trunk"], z_axis, math.rad(-6), math.rad(10 * speedMult))
 			
 			Move(modelParts["Trunk"], y_axis, 4, 0)	
-			CustomEmitter( modelParts["leftFoot"], animData["dirt"])	
-			CustomEmitter( modelParts["rightFoot"], animData["dirt"])				
+			CustomEmitter( modelParts["leftFoot"], animData["dirt_hearts"])	
+			CustomEmitter( modelParts["rightFoot"], animData["dirt_hearts"])				
 			Sleep(500/speedMult)	
 							
 			Turn(modelParts["Trunk"], z_axis, math.rad(6), math.rad(10 * speedMult))
@@ -46,8 +46,8 @@ animations = {
 			Sleep(658/speedMult)
 
 			Move(modelParts["Trunk"], y_axis, 4, 0)		
-			CustomEmitter( modelParts["leftFoot"], animData["dirt"])	
-			CustomEmitter( modelParts["rightFoot"], animData["dirt"])				
+			CustomEmitter( modelParts["leftFoot"], animData["dirt_hearts"])	
+			CustomEmitter( modelParts["rightFoot"], animData["dirt_hearts"])				
 			Sleep(500/speedMult)
 
 
@@ -75,7 +75,7 @@ animations = {
 		
 		local pieces		= Spring.GetUnitPieceMap(unitID)
 		
-		moveData["dirt"]	= "dirt"
+		moveData["dirt_hearts"]	= "dirt_hearts"
 		
 		local partsList		= {	-- torso
 								'Trunk',	'leftFoot', 'rightFoot',}	
