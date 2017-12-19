@@ -1,10 +1,10 @@
 function widget:GetInfo()
     return {
         name    = 'Reinstall Windows',
-        desc    = 'Those were the days',
-        author  = '',
+        desc    = '',
+        author  = 'Microsoft',
         date    = '',
-        license = 'secret knee trembler',
+        license = 'GPL v3',
         layer   = 0,
         enabled = true
     }

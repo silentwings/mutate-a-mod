@@ -32,7 +32,8 @@ local minUnits = 30
 local resampleWantedUnits = (30*60)*8 -- in gameframes 
 
 local freePenguins = 0 -- woooooo
-local queenTime = 1--30*60*(22+28*math.random()*math.random()) -- bwahahah
+local queenTime = 1--30*60*(25+20*math.random()*math.random()) -- bwahahah
+local queenLeadIn = 30*60*(10) -- mohohohoho
 local queenFrenzy = false
 
 local minUnitHeight = 2
@@ -306,7 +307,7 @@ end
 
 local function PlaceMushroom(x, z)
     local unitName = SampleFromArrayTable(mushroomTypes)
-    if queenFrenzy or math.random()<0.02 and Spring.GetGameFrame()>30*60*10 then
+    if (math.random()<0.02 and Spring.GetGameFrame()>30*60*10) or (queenFrenzy and math.random()>(queenTime+queenLeadIn-Spring.GetGameFrame())/(queenLeadIn) and math.random()>0.75) then
         unitName = SampleFromArrayTable(chickenTypes) -- XD
         if queenFrenzy or math.random()<0.5 then
             local teamList = Spring.GetTeamList()
@@ -403,6 +404,7 @@ function gadget:GameFrame(n)
     if n%30~=0 then return end    
     if n>=queenTime then 
         queenFrenzy = true 
+        maxUnits = maxUnits + 10
     end
 
     if n%resampleWantedUnits==0 then ResampleWantedUnits() end    

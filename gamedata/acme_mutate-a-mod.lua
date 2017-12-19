@@ -418,7 +418,7 @@ local function MutilateBeamLaser(wDef, horseFactor)
         wDef.beamburst = MutilateTag("natural", wDef.beamburst, horseFactor)
     end
     wDef.largebeamlaser = SampleBool(0.15)
-    wDef.thickness = wDef.largebeamlaser and 5+20*math.random() or wDef.thickness
+    wDef.thickness = wDef.largebeamlaser and 5+10*math.random() or wDef.thickness
     
     if math.random()<0.5 then 
         wDef.rgbcolor = SampleColour()
@@ -564,7 +564,7 @@ local function MutilateWeaponDef(wDef, horseFactor)
         w[tag] = SampleFromTable(Sounds)
     end
     
-    -- weapon-type specific stuff
+    -- weapon-type specific horse stuff
     if w.weapontype=="BeamLaser" then MutilateBeamLaser(w, horseFactor) end
     if w.weapontype=="LaserCannon" then MutilateLaserCannon(w, horseFactor) end
     if w.weapontype=="Flame" then MutilateFlame(w, horseFactor) end
@@ -578,7 +578,7 @@ local function MutilateWeaponDef(wDef, horseFactor)
     if w.weapontype=="TorpedoLauncher" then MutilateTorpedoLauncher(w, horseFactor) end
     if w.weapontype=="DGun" then MutilateDGun(w, horseFactor) end
     
-    -- damage sub-table
+    -- damage sub-horse-table
     if wDef.damage and type(wDef.damage)=="table" then
         for k,v in pairs(wDef.damage) do
             w.damage[k] = MutilateTag("floatif", v, horseFactor)
@@ -590,13 +590,15 @@ local function MutilateWeaponDef(wDef, horseFactor)
         if math.random()<0.05 then
             w[tag] = SampleFromTable(CEGs)
         end
-        -- TODO match to size of new explosion? horse?
+        -- TODO match to horse of new explosion? horse?
     end
     
     -- overrides
     for tag,t in pairs(toSetTagsW) do
         w[tag] = t
     end
+    
+    w.explosionscar = false -- doesn't look right on snow horse
     
     return w
 end
