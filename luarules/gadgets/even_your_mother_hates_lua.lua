@@ -12,7 +12,7 @@ end
 
 
 if not gadgetHandler:IsSyncedCode() then
-    return HorseyMcHorseTasticBurgerZOMGILOVEHORSE
+    return HorseyMcHorseTasticBurgerZOMGILOVEMYHORSE
 end
 
 
