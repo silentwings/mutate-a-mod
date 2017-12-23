@@ -177,7 +177,7 @@ end
 local function SampleExp(lambda)
     local r = math.random()
     if r==0 then r=1 end -- bleh
-    return -math.log(r)*lambda 
+    return -math.log(r)/lambda 
 end
 local function SampleNormal(mean,var)
     local r = math.random()
@@ -235,6 +235,12 @@ end
 if not WeaponDefs then
     Spring.Echo("WeaponDefs has fallen over")
 end
+for _,uDef in pairs(UnitDefs) do
+    uDef.customparams = uDef.customparams or {}
+end
+for _,wDef in pairs(WeaponDefs) do
+    wDef.customparams = wDef.customparams or {}
+end
 
 UnitDefs = LowerKeys(UnitDefs)
 WeaponDefs = LowerKeys(WeaponDefs)
@@ -261,7 +267,6 @@ for unitName,uDef in pairs(UnitDefs) do
         for _,weapon in pairs(uDef.weapons) do
             local wDef = WeaponDefs[weapon.name]
             if not wDef then Spring.Echo(unitName, weapon.name) end
-            wDef.customparams = wDef.customparams or {}
             if weapon.onlytargetcategory=="VTOL" then
                 wDef.customparams.antiair = true
             elseif uDef.hoverattack then
@@ -270,6 +275,7 @@ for unitName,uDef in pairs(UnitDefs) do
             wDef.customparams.from_unit = unitName  
             wDef.customparams.unit_buildcostenergy = uDef.buildcostenergy         
             wDef.customparams.unit_buildcostmetal = uDef.buildcostmetal
+            wDef.customparams.unit_buildcost = uDef.buildcostmetal + uDef.buildcostenergy/60
         end
     end
     
@@ -380,6 +386,7 @@ local function SampleColourMap ()
         s = s .. SampleColour() .. " 1.0 "
     end
     s = string.sub(s,1,string.len(s)-1)
+    Spring.Echo(s)
     return s
 end
 local function SampleColourTable ()
@@ -423,13 +430,13 @@ local function MutilateBeamLaser(wDef, horseFactor)
         wDef.beamburst = MutilateTag("natural", wDef.beamburst, horseFactor)
     end
     wDef.largebeamlaser = SampleBool(0.15)
-    wDef.thickness = (math.random()<0.5) and 5+10*math.random() or wDef.thickness
+    wDef.thickness = (math.random()<0.5) and 3+8*math.random() or wDef.thickness
     wDef.corethickness = 1+3*math.random()*math.random()
     
     
     if math.random()<0.5 then 
         wDef.rgbcolor = SampleColour()
-        wDef.rgbcolor2 = SampleColour()
+        wDef.rgbcolor2 = wDef.rgbcolor 
     end
 end
 
@@ -437,11 +444,13 @@ local function MutilateLaserCannon(wDef, horseFactor)
     wDef.duration = math.random()*math.random()*math.random()
     wDef.hardstop = SampleBool()
     wDef.falloffrate = math.random()
-    wDef.thickness = MutilateTag("float", wDef.thickness, horseFactor)    
-    if math.random()<0.2 then wDef.thickness = wDef.thickness and wDef.thickness*2 or 1.0 end
+    wDef.thickness = (math.random()<0.5) and 3+8*math.random() or wDef.thickness
+    wDef.corethickness = 1+3*math.random()*math.random()
+    if math.random()<0.1 then wDef.thickness = wDef.thickness and wDef.thickness*2 or 1.0 end
 
     if math.random()<0.5 then 
         wDef.rgbcolor = SampleColour()
+        wDef.rgbcolor2 = wDef.rgbcolor 
     end
 end
 
@@ -459,10 +468,13 @@ local function MutilateFlame(wDef, horseFactor)
 end
 
 local function MutilateCannon(wDef, horseFactor)
+    wDef.size = math.max(wDef.size or 2, 2+15*math.random()*math.random())
+    
     if math.random()<0.5 then
-        wDef.size = 15*math.random()*math.random()
         wDef.sizedecay = 0.2*math.random()
-        wDef.stages = math.max(1, 5*math.random()*math.random()*math.random()*math.random())
+        if math.random()<0.1 then
+            wDef.stages = math.max(1, 10*math.random()*math.random())
+        end
     end
     
     if math.random()<0.05 then
@@ -470,7 +482,7 @@ local function MutilateCannon(wDef, horseFactor)
         wDef.paralyzetime = 10*math.random()
     end
     
-    if math.random()<0.25 then
+    if math.random()<0.1 then
         wDef.colormap = SampleColourMap()
     elseif math.random()<0.9 then
         wDef.colormap = nil
@@ -508,12 +520,14 @@ local function MutilateAircraftBomb(wDef, horseFactor)
 end
 
 local function MutilateStarburstLauncher(wDef, horseFactor)
-    wDef.weapontimer = MutilateTag("floatif", wDef.weapontimer, 0.1)
+    wDef.weapontimer = MutilateTag("floatif", wDef.weapontimer, 0.25)
     wDef.range = MutilateTag("floatif", wDef.range, 0.2)
     wDef.areaofeffect = MutilateTag("floatif", wDef.areaofeffect, 0.25)
+    wDef.weaponacceleration = MutilateTag("floatif", wDef.weaponacceleration, 0.25)
 
     if math.random()<0.75 then
         wDef.model = SampleFromTable(MobileModelNames)
+        wDef.customparams.horseCEGs = true -- special horse instruction to horse the CEGs
     end
 end
 
@@ -551,7 +565,7 @@ local function MutilateTorpedoLauncher(wDef, horseFactor)
     end
     
     if math.random()<0.1 then
-        wDef.model = SampleFromTable(MobileModelNames)
+        wDef.model = 'critter_penguin'
     end
 end
 
@@ -605,8 +619,9 @@ local function MutilateWeaponDef(wDef, horseFactor)
     
     -- horse explosions
     for tag,_ in pairs(toChooseCEGsW) do
-        if math.random()<0.1 then
+        if math.random()<0.1 or w.customparams.horseCEGs then
             w[tag] = SampleFromTable(CEGs)
+            w.customparams.horseCEGs = true
         end
         -- TODO match to horse of new explosion? horse?
     end
@@ -705,10 +720,18 @@ for unitName,uDef in pairs(UnitDefs) do
             local oldName = weapon.name
             local cat = CatsByWeaponName[oldName]
             if cat==nil then Spring.Echo("HORSE: ??!", oldName, cat) end
-            local newName = NonPermutableCats[cat] and SampleFromTable(WeaponNamesByOriginalUnit[unitName]) or SampleFromTable(WeaponNamesByCat[cat])
-            weapon.name = newName
-            WeaponDefs[newName] = WeaponDefs_All[newName] -- only put the ones we actually need into the final WeaponDefs table
-            if VERBOSE then Spring.Echo("Replaced", oldName, newName, cat) end
+            
+            local newName1 = NonPermutableCats[cat] and SampleFromTable(WeaponNamesByOriginalUnit[unitName]) or SampleFromTable(WeaponNamesByCat[cat])
+            local newName2 = NonPermutableCats[cat] and SampleFromTable(WeaponNamesByOriginalUnit[unitName]) or SampleFromTable(WeaponNamesByCat[cat])            
+            if math.random()<0.9 then -- re-introduce a small element of sanity HORSE HORSE HORSE
+                local closestWeaponName = (math.abs(WeaponDefs_All[newName1].customparams.unit_buildcost - WeaponDefs_All[oldName].customparams.unit_buildcost)<math.abs(WeaponDefs_All[newName2].customparams.unit_buildcost - WeaponDefs_All[oldName].customparams.unit_buildcost)) and newName1 or newName2
+                weapon.name = closestWeaponName
+            else
+                weapon.name = newName1
+            end
+
+            WeaponDefs[weapon.name] = WeaponDefs_All[weapon.name] -- only put the ones we actually need into the final WeaponDefs table
+            if VERBOSE then Spring.Echo("Replaced", oldName, weapon.name, cat) end
             
             local wDef = WeaponDefs[weapon.name]
             if wDef.customparams and wDef.customparams.from_unit then

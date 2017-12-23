@@ -189,6 +189,14 @@ local function ChaseAfterSomething(uID)
     return
 end
 
+local function MushroomMotionDeath(unitID)
+    local x,_,z = Spring.GetUnitPosition(unitID)
+    local nearbyUnits = Spring.GetUnitsInCylinder(x,z,150)
+    if #nearbyUnits>2 and math.random()<0.25 then
+        toKill[unitID] = true        
+    end    
+end
+
 local function MushroomMotion(n)
     if VERBOSE then Spring.Echo("mushroom walkies") end
     for unitID,state in pairs(mushrooms) do
