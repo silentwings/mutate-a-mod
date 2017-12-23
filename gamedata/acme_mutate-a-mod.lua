@@ -386,7 +386,6 @@ local function SampleColourMap ()
         s = s .. SampleColour() .. " 1.0 "
     end
     s = string.sub(s,1,string.len(s)-1)
-    Spring.Echo(s)
     return s
 end
 local function SampleColourTable ()
@@ -432,7 +431,9 @@ local function MutilateBeamLaser(wDef, horseFactor)
     wDef.largebeamlaser = SampleBool(0.15)
     wDef.thickness = (math.random()<0.5) and 3+8*math.random() or wDef.thickness
     wDef.corethickness = 1+3*math.random()*math.random()
-    
+    if math.random()<0.25 then
+        wDef.beamttl = math.min(1 + MutilateTag("natural", wDef.beamttl or 1, horseFactor), 12)
+    end
     
     if math.random()<0.5 then 
         wDef.rgbcolor = SampleColour()
