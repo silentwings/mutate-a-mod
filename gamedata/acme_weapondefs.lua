@@ -77,8 +77,8 @@ toChooseTagsW = {
 
     --stockpile = "bool",
     --stockpiletime = "float",
-    metalpershot = "floatif",
-    energypershot = "floatif",    
+    metalpershot = "natural",
+    energypershot = "natural",    
 
     --paralyzer = "bool",
     --paralyzetime = "floatif",

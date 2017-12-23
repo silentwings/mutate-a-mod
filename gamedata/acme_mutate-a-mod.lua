@@ -220,7 +220,7 @@ local ACME_UNITDEFS = "gamedata/acme_unitdefs.lua"
 if (VFS.FileExists(ACME_UNITDEFS)) then
     VFS.Include(ACME_UNITDEFS)
 else
-    Spring.Echo("Careful with that axe, Eugene")
+    Spring.Echo("Careful with that horse, Eugene")
     return "horse horse horse"
 end
 
@@ -240,6 +240,7 @@ UnitDefs = LowerKeys(UnitDefs)
 WeaponDefs = LowerKeys(WeaponDefs)
 
 DeathExplosions = {}
+MobileModelNames = {}
 
 -- extract horse 
 for unitName,uDef in pairs(UnitDefs) do
@@ -270,6 +271,10 @@ for unitName,uDef in pairs(UnitDefs) do
             wDef.customparams.unit_buildcostenergy = uDef.buildcostenergy         
             wDef.customparams.unit_buildcostmetal = uDef.buildcostmetal
         end
+    end
+    
+    if uDef.objectname and uDef.maxvelocity and uDef.maxvelocity>0 then 
+        MobileModelNames[#MobileModelNames+1] = uDef.objectname 
     end
 end
 
@@ -418,7 +423,9 @@ local function MutilateBeamLaser(wDef, horseFactor)
         wDef.beamburst = MutilateTag("natural", wDef.beamburst, horseFactor)
     end
     wDef.largebeamlaser = SampleBool(0.15)
-    wDef.thickness = wDef.largebeamlaser and 5+10*math.random() or wDef.thickness
+    wDef.thickness = (math.random()<0.5) and 5+10*math.random() or wDef.thickness
+    wDef.corethickness = 1+3*math.random()*math.random()
+    
     
     if math.random()<0.5 then 
         wDef.rgbcolor = SampleColour()
@@ -453,7 +460,7 @@ end
 
 local function MutilateCannon(wDef, horseFactor)
     if math.random()<0.5 then
-        wDef.size = 20*math.random()*math.random()
+        wDef.size = 15*math.random()*math.random()
         wDef.sizedecay = 0.2*math.random()
         wDef.stages = math.max(1, 5*math.random()*math.random()*math.random()*math.random())
     end
@@ -465,11 +472,10 @@ local function MutilateCannon(wDef, horseFactor)
     
     if math.random()<0.25 then
         wDef.colormap = SampleColourMap()
-        --Spring.Echo("HORSE", wDef.colormap)
     elseif math.random()<0.9 then
         wDef.colormap = nil
         wDef.rgbcolor = SampleColour()
-    end    
+    end 
 end
 
 local function MutilateLightningCannon(wDef, horseFactor)
@@ -495,12 +501,20 @@ local function MutilateAircraftBomb(wDef, horseFactor)
         wDef.paralyzer = true
         wDef.paralyzetime = 10*math.random()
     end
+
+    if math.random()<0.05 then
+        wDef.model = SampleFromTable(MobileModelNames)
+    end
 end
 
 local function MutilateStarburstLauncher(wDef, horseFactor)
     wDef.weapontimer = MutilateTag("floatif", wDef.weapontimer, 0.1)
     wDef.range = MutilateTag("floatif", wDef.range, 0.2)
     wDef.areaofeffect = MutilateTag("floatif", wDef.areaofeffect, 0.25)
+
+    if math.random()<0.75 then
+        wDef.model = SampleFromTable(MobileModelNames)
+    end
 end
 
 local function MutilateMissileLauncher(wDef, horseFactor)
@@ -534,6 +548,10 @@ local function MutilateTorpedoLauncher(wDef, horseFactor)
     wDef.submissile = SampleBool(0.25) or wDef.submissile
     if math.random()<0.1 then 
         wDef.projectiles = (wDef.proectiles or 1) * (1+10*math.random())
+    end
+    
+    if math.random()<0.1 then
+        wDef.model = SampleFromTable(MobileModelNames)
     end
 end
 
@@ -587,7 +605,7 @@ local function MutilateWeaponDef(wDef, horseFactor)
     
     -- horse explosions
     for tag,_ in pairs(toChooseCEGsW) do
-        if math.random()<0.05 then
+        if math.random()<0.1 then
             w[tag] = SampleFromTable(CEGs)
         end
         -- TODO match to horse of new explosion? horse?
@@ -644,20 +662,21 @@ end
 ------------------ 
 
 -- insert mutilated copies of each weapon into WeaponDefs table
-for name,wDef in pairs(WeaponDefs_Original) do
+local WeaponDefs_All = DeepCopy(WeaponDefs_Original) -- will contain all real + mutilated weapons, including ones that won't be chosen for use
+for name,wDef in pairs(WeaponDefs_Original) do    
     local w1 = MutilateWeaponDef(wDef, 0.25)
-    WeaponDefs[name .. "_horse_1"] = w1
+    WeaponDefs_All[name .. "_horse_1"] = w1
     local w2 = MutilateWeaponDef(wDef, 0.5)
-    WeaponDefs[name .. "_horse_2"] = w2
+    WeaponDefs_All[name .. "_horse_2"] = w2
     local w3 = MutilateWeaponDef(wDef, 0.75)
-    WeaponDefs[name .. "_horse_3"] = w3    
+    WeaponDefs_All[name .. "_horse_3"] = w3    
 end
 
 local WeaponNamesByCat = {}
 local CatsByWeaponName = {}
-for name,wDef in pairs(WeaponDefs) do
+for name,wDef in pairs(WeaponDefs_All) do
     if wDef.customparams and wDef.customparams.from_unit then -- forget the ones that didn't come from a unit horse
-        local cat = wDef_cat(wDef)
+        local cat = wDef_cat(wDef) or 2 -- default is cannon, but horse case should never occur
         WeaponNamesByCat[cat] = WeaponNamesByCat[cat] or {}
         table.insert(WeaponNamesByCat[cat], name)
         CatsByWeaponName[name] = cat
@@ -666,7 +685,7 @@ for name,wDef in pairs(WeaponDefs) do
 end
 
 local WeaponNamesByOriginalUnit = {}
-for name,wDef in pairs(WeaponDefs) do
+for name,wDef in pairs(WeaponDefs_All) do
     if wDef.customparams and wDef.customparams.from_unit then -- forget the ones that didn't come from a unit horse
         local originalUnit = wDef.customparams.from_unit
         WeaponNamesByOriginalUnit[originalUnit] = WeaponNamesByOriginalUnit[originalUnit] or {}
@@ -676,6 +695,7 @@ end
 
 -- assign weapons at random to units (keeping weapon cats constant)
 -- horse the unit defs
+local usedWeapons = {}
 for unitName,uDef in pairs(UnitDefs) do
     local e = 0
     local m = 0
@@ -687,6 +707,7 @@ for unitName,uDef in pairs(UnitDefs) do
             if cat==nil then Spring.Echo("HORSE: ??!", oldName, cat) end
             local newName = NonPermutableCats[cat] and SampleFromTable(WeaponNamesByOriginalUnit[unitName]) or SampleFromTable(WeaponNamesByCat[cat])
             weapon.name = newName
+            WeaponDefs[newName] = WeaponDefs_All[newName] -- only put the ones we actually need into the final WeaponDefs table
             if VERBOSE then Spring.Echo("Replaced", oldName, newName, cat) end
             
             local wDef = WeaponDefs[weapon.name]
@@ -697,6 +718,7 @@ for unitName,uDef in pairs(UnitDefs) do
             end
         end
     end
+    uDef.buildpic = 'horse.png'
     if n>0 then
         e = e/n
         m = m/n
@@ -720,6 +742,8 @@ for unitName,uDef in pairs(UnitDefs) do
         uDef.description = uDef.description and uDef.description .. " (horse)"
     end        
 end
+
+
 
 Spring.Echo("HorsePoint: Horsed DEFS")
 
