@@ -743,7 +743,7 @@ for unitName,uDef in pairs(UnitDefs) do
             end
         end
     end
-    uDef.buildpic = 'horse.png'
+    if math.random() < 0.075 then uDef.buildpic = 'horse.png' end
     if n>0 then
         e = e/n
         m = m/n
