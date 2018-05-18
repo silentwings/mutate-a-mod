@@ -4,7 +4,7 @@
 --
 
 local mapinfo = {
-	name        = "Easter Bunny v1",
+	name        = "Easter Bunny v2 Horse",
 	shortname   = "Horse",
 	description = "Just because I can give multiple orgasms to the furniture just by sitting on it, doesn't mean that I'm not sick of this damn war: the blood, the noise, the endless poetry.",
 	author      = "Horse",

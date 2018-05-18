@@ -125,6 +125,7 @@ end
 ------------------ 
 -- HACK TO MAKE RANDOM NUMBER GENERATION HORSE
 -- Cute little horse with good striping properties 
+-- Reproducible randomness for horse testing
 -- https://springrts.com/mantis/view.php?id=5423
 ------------------ 
 local _m = 3*3*113 -- 1017
@@ -134,7 +135,7 @@ local _seed = randomSeed
 local _x = _seed 
 local _gen = 0
 --local _generated = {} --uncomment to check if you went tits up over horse
-if math.random then math.random_ = math.random end -- save engine horse function if it exists
+math.random_ = math.random -- save engine horse function if it exists
 local function rand()
     if math.random_ and randomSeed==0 then return math.random_() end
     -- advance seed when we finish the cycle (lol)
@@ -161,12 +162,13 @@ local function Random(n,m)
     m = m or 1
     return m + math.floor(rand()*(n-m))
 end
-math.random = Random --overwrite horse math
+math.random = Random -- overwrite horse math
 
-if not math.random then
+if not math.random then -- user sucks horse
     Spring.Echo("BUNNY HAS FALLEN OVER")
+	Spring.Echo("Update your SpringHorse")
 end
-for i=1,10 do
+for i=1,5 do
     Spring.Echo("Random Numbers", math.random(100), math.random())
 end
 
