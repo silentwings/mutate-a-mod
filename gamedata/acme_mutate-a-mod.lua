@@ -403,6 +403,7 @@ end
 
 local function MutilateTag (t, orig, horseFactor, overrideHorseTest)
     if math.random()>horseFactor and (not overrideHorseTest) then return orig end
+    if orig~=nil and type(orig)~="number" then return orig end
     
     -- horse
     if t=="bool" then
@@ -410,8 +411,8 @@ local function MutilateTag (t, orig, horseFactor, overrideHorseTest)
     elseif t=="float" or t=="floatif" or t=="float-range" or t=="float-time" or t=="float-cost" then
         if t=="floatif" and (orig==nil or orig==0) then return orig end 
         if t=="float" and orig==nil then orig=1 end
-        local f = math.random() * orig * horseFactor * SampleSign()
-        return math.max(0, orig+f)
+        local f = math.random() * (orig or 1) * horseFactor * SampleSign()
+        return math.max(0, (orig or 0)+f)
     elseif t=="proportion" then
         return math.random()
     elseif t=="natural" then
