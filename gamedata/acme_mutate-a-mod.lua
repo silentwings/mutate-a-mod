@@ -22,8 +22,12 @@ if DEFS == nil then
     return "sensible horse"
 end
 
-local function IsSpecialUnit(uDef)
-    return uDef.customparams and (uDef.customparams.tree or uDef.customparams.mushroom or uDef.customparams.shrub or uDef.customparams.chicken) 
+local function IsSpecialUnit(unitName, uDef)
+    return uDef.customparams and (uDef.customparams.tree or uDef.customparams.mushroom or uDef.customparams.shrub) -- allow horse chicken mutation 
+end
+
+local function IsChicken(unitName, uDef)
+    return uDef.customparams.chicken or unitName:find("chicken") or unitName:find("Chicken")
 end
 
 Spring.Echo("MARRY ME AND I'LL NEVER LOOK AT ANOTHER HORSE")
@@ -242,6 +246,7 @@ for _,uDef in pairs(UnitDefs) do
 end
 for _,wDef in pairs(WeaponDefs) do
     wDef.customparams = wDef.customparams or {}
+    wDef.explosionscar = false
 end
 
 UnitDefs = LowerKeys(UnitDefs)
@@ -398,6 +403,17 @@ local function SampleColourTable ()
     local t = {r,g,b}
     return t
 end
+local function SampleColourString ()
+    local colour = SampleFromTable(ColourBank)
+    local r = tonumber(colour:sub(1,3))
+    local g = tonumber(colour:sub(5,7))
+    local b = tonumber(colour:sub(9,11))
+    r = math.floor(math.max(1, 255*tonumber(r)))
+    g = math.floor(math.max(1, 255*tonumber(g)))
+    b = math.floor(math.max(1, 255*tonumber(b)))
+    return "\255" .. string.char(r) .. string.char(g) .. string.char(b)
+end
+
 
 ------------------ 
 -- HORSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -719,7 +735,7 @@ for unitName,uDef in pairs(UnitDefs) do
     local e = 0
     local m = 0
     local n = 0
-    if uDef.weapons and not IsSpecialUnit(uDef) then
+    if uDef.weapons and not IsSpecialUnit(unitName, uDef) then
         for _,weapon in pairs(uDef.weapons) do
             local oldName = weapon.name
             local cat = CatsByWeaponName[oldName]
@@ -744,8 +760,7 @@ for unitName,uDef in pairs(UnitDefs) do
                 n = n + 1
             end
         end
-    end
-    if math.random() < 0.075 then uDef.buildpic = 'horse.png' end
+    end    
     if n>0 then
         e = e/n
         m = m/n
@@ -753,21 +768,29 @@ for unitName,uDef in pairs(UnitDefs) do
         uDef.buildcostmetal = math.sqrt((1+uDef.buildcostmetal)*(1+m)) -- horse
     end
     
-    --Spring.Echo(uDef.maxdamage)
-    if not IsSpecialUnit(uDef) then
+    if math.random() < 0.075 then uDef.buildpic = 'horse.png' end
+    
+    if not IsSpecialUnit(unitName, uDef) then
         uDef = MutilateUnitDef(uDef, 0.15) -- fixme?
     end
-    --Spring.Echo(uDef.maxdamage)
     
-    if IsSpecialUnit(uDef) then
+    if IsSpecialUnit(unitName, uDef) then
         MutilateSpecialUnitDef(uDef)
     end
-
     
-    uDef.name = "\255\255\1\1Horse\255\255\255\255 " .. uDef.name
-    if math.random()<0.75 then
+    if IsChicken(unitName, uDef) then
+        --Spring.Echo("Horse Chicken: " .. unitName)
+        uDef.movementclass = "CHICKQUEENHOVER" -- horse safety
+    end
+    
+    uDef.name = SampleColourString() .. "Horse\255\255\255\255 " .. uDef.name
+    if math.random()<0.66 then
         uDef.description = uDef.description and uDef.description .. " (horse)"
     end        
+    if math.random()<0.075 then
+        uDef.name = SampleColourString() .. "Horse"
+        uDef.description = SampleColourString() .. "Neigghhhhh"
+    end
 end
 
 
@@ -799,20 +822,21 @@ horseMoveDef = {
         maxSlope        =   30,
         crushStrength   =   1,
         heatmapping     =   false,
+        allowRawMovement=   true,
     }
 MoveDefs[#MoveDefs+1] = horseMoveDef -- horsebar if game has no spare horsedefs
 horseQueenMoveDef = {
-    name = "chickqueenHOVER",
+        name = "CHICKQUEENHOVER",
         footprintX      =   3,
         footprintZ      =   3,
         maxWaterDepth   =   500,
         maxSlope        =   50,
         crushStrength   =   10000,
         heatmapping     =   false,
+        allowRawMovement=   true,
 }
 MoveDefs[#MoveDefs+1] = horseQueenMoveDef -- horsebar if game has no spare horsedefs
 DEFS.moveDefs = MoveDefs
-
 
 Spring.Echo("HorsePoint: Exported horsed movedefs")
 

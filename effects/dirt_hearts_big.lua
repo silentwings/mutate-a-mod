@@ -27,7 +27,7 @@ return {
         pos                = [[r-0.5 r0.5, 1 r2, r-0.5 r0.5]],
         sizegrowth         = 1.2,
         sizemod            = 1.0,
-        texture            = [[new_dirta]],
+        texture            = [[new_dirta_hearts]],
         useairlos          = false,
 		--colorchange			= "stuffs",
       },
