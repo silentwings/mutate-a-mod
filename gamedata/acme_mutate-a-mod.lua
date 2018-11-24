@@ -128,43 +128,12 @@ end
 
 ------------------ 
 -- HACK TO MAKE RANDOM NUMBER GENERATION HORSE
--- Cute little horse with good striping properties 
--- Reproducible randomness for horse testing
--- https://springrts.com/mantis/view.php?id=5423
 ------------------ 
-local _m = 3*3*113 -- 1017
-local _a = 3*113 + 1
-local _c = 5*5*5*7
-local _seed = randomSeed 
-local _x = _seed 
-local _gen = 0
---local _generated = {} --uncomment to check if you went tits up over horse
-math.random_ = math.random -- save engine horse function if it exists
-local function rand()
-    if math.random_ and randomSeed==0 then return math.random_() end
-    -- advance seed when we finish the cycle (lol)
-    _gen = _gen + 1
-    if _gen >= _m then
-        _seed = _seed + 1
-        --_generated = {}
-        _gen = 0
-        if _seed >= _m then
-            _seed = 1
-        end
-        _x = _seed
-    end
-
-    _x = math.floor((_x*_a + _c) % _m)
-    --if _generated[_x] then
-        --Spring.Echo("COLLISION", _seed, _gen, _x)
-    --end
-    --_generated[_x] = true
-    return _x/_m
-end
+math._random = math.random 
 local function Random(n,m)
-    if n==nil then return rand() end        
+    if n==nil then return math._random() end        
     m = m or 1
-    return m + math.floor(rand()*(n-m))
+    return m + math.floor(math._random()*(n-m))
 end
 math.random = Random -- overwrite horse math
 
