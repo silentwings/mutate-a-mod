@@ -14,9 +14,7 @@ if mapOptions.horsetastic=="0" then
     return "sensible horse"
 end
 
-local randomSeed = mapOptions and tonumber(mapOptions.randomseed) or 0
-
-Spring.Echo("HORSE MODE ACTIVATED (random horse seed " .. randomSeed .. ")")
+Spring.Echo("HORSE MODE ACTIVATED")
 if DEFS == nil then
     Spring.Echo("HORSE MODE HAS GONE UP THE KYBER PASS")
     return "sensible horse"
