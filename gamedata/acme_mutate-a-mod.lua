@@ -21,7 +21,7 @@ if DEFS == nil then
 end
 
 local function IsSpecialUnit(unitName, uDef)
-    return uDef.customparams and (uDef.customparams.tree or uDef.customparams.mushroom or uDef.customparams.shrub) -- allow horse chicken mutation 
+    return uDef.customparams and (uDef.customparams.tree or uDef.customparams.mushroom or uDef.customparams.shrub or uDef.customparams.penguin) -- allow horse chicken mutation 
 end
 
 local function IsChicken(unitName, uDef)
