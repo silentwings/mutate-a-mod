@@ -4,7 +4,7 @@
 --
 
 local mapinfo = {
-	name        = "Easter Bunny v2 Horse",
+	name        = "Christmas Horse v3",
 	shortname   = "Horse",
 	description = "Just because I can give multiple orgasms to the furniture just by sitting on it, doesn't mean that I'm not sick of this damn war: the blood, the noise, the endless poetry.",
 	author      = "Horse",
@@ -17,7 +17,7 @@ local mapinfo = {
 
 	maphardness     = 300,
 	notDeformable   = false,
-	gravity         = 70,
+	gravity         = 120,
 	tidalStrength   = 0,
 	maxMetal        = 3.5,
 	extractorRadius = 90.0,
@@ -26,8 +26,8 @@ local mapinfo = {
 
 
 	smf = {
-		minheight = -930,
-		maxheight = 1570,
+		minheight = -160,
+		maxheight = 1510,
 		--smtFileName0 = "",
 		--smtFileName1 = "",
 		--smtFileName.. = "",
@@ -159,9 +159,9 @@ local mapinfo = {
 			hardness = 1.0,
 			receiveTracks = true,
 			moveSpeeds = {
-				tank  = 1.1,
+				tank  = 1.0,
 				kbot  = 1.0,
-				hover = 1.5,
+				hover = 1.0,
 				ship  = 1.0,
 			},
 		},
