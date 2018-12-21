@@ -17,7 +17,6 @@ local limit = 20
 local penguinDefID = UnitDefNames["critter_penguin"].id
 
 function gadget:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, facing)
-	Spring.Echo(unitDefID, builderID, builderTeam, x, y, z, facing)
 	local n = Spring.GetTeamUnitDefCount(builderTeam, unitDefID)	
 	
 	r = 50 + 100*math.random() + Spring.GetUnitRadius(builderID) 
@@ -34,7 +33,7 @@ function gadget:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, fa
 			Spring.Echo("\255\255\255\255The Christmas horse says you cannot have more than 20 of a single unit type! Instead you will be given a penguin.")
 			unitID = Spring.CreateUnit("critter_penguin", x,y,z, "n", builderTeam)
 		else
-			Spring.Echo("\255\255\255\255The Christmas horse says you cannot have more than 20 of a single unit type! You already have lots of penguins.")		
+			Spring.Echo("\255\255\255\255The Christmas horse says you cannot have more than 20 of a single unit type! Also, you already have lots of penguins.")		
 		end
 		
 		return false
