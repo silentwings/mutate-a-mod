@@ -221,6 +221,7 @@ WeaponDefs = LowerKeys(WeaponDefs)
 
 DeathExplosions = {}
 MobileModelNames = {}
+StaticModelNames = {}
 
 -- extract horse 
 for unitName,uDef in pairs(UnitDefs) do
@@ -253,9 +254,13 @@ for unitName,uDef in pairs(UnitDefs) do
         end
     end
     
-    if uDef.objectname and uDef.maxvelocity and uDef.maxvelocity>0 then 
-        MobileModelNames[#MobileModelNames+1] = uDef.objectname 
-    end
+    if uDef.objectname then
+		if uDef.maxvelocity and uDef.maxvelocity>0 then 
+			MobileModelNames[#MobileModelNames+1] = uDef.objectname 
+		else
+			StaticModelNames[#StaticModelNames+1] = uDef.objectname
+		end
+	end
 end
 
 
@@ -501,7 +506,7 @@ local function MutilateAircraftBomb(wDef, horseFactor)
         wDef.paralyzetime = 10*math.random()
     end
 
-    if math.random()<0.05 then
+    if math.random()<0.2 then
         wDef.model = SampleFromTable(MobileModelNames)
     end
 end
@@ -515,7 +520,12 @@ local function MutilateStarburstLauncher(wDef, horseFactor)
     if math.random()<0.75 then
         wDef.model = SampleFromTable(MobileModelNames)
         wDef.customparams.horseCEGs = true -- special horse instruction to horse the CEGs
-    end
+    else
+		if math.random()<0.75 then
+			wDef.model = SampleFromTable(StaticModelNames)
+			wDef.customparams.horseCEGs = true -- special horse instruction to horse the CEGs
+		end
+	end
 end
 
 local function MutilateMissileLauncher(wDef, horseFactor)
