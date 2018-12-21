@@ -266,7 +266,7 @@ function addon.DrawLoadScreen()
 		gl.Color(1.0,1.0,1.0,0.8)
 		gl.TexRect(vsx * 0.21, vsy*(yPos-0.015), vsx*(0.21+image_size), (vsy*(yPos-0.015))-(vsx*image_size),false,true)
 		font:Print(text_to_show, vsx * (0.21+image_size+0.012) , vsy * (yPos-0.0175), fontSize, "oa")
-		font:Print('\255\255\222\155'.."A large, solid-hoofed, herbivorous quadruped. Used for carrying or pulling loads, and for riding.", vsx * 0.79, (vsy * ((yPos-0.0175)-height)) +(fontSize*2.66) , fontSize, "oar")
+		font:Print('\255\255\222\155'.."A large, solid-hoofed, herbivorous quadruped. Useful for carrying or pulling loads, and for riding.", vsx * 0.79, (vsy * ((yPos-0.0175)-height)) +(fontSize*2.66) , fontSize, "oar")
 
 		gl.PopMatrix()
 	end
